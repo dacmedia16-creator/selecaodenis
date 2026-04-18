@@ -2,6 +2,7 @@ import { Award, Star, TrendingUp, Trophy } from "lucide-react";
 import { useCountUp } from "@/hooks/useCountUp";
 import balao from "@/assets/remax-balao.png";
 import premiacoes from "@/assets/denis-premiacoes.jpg";
+import premiacoes2 from "@/assets/denis-premiacoes-2.jpg";
 
 const Stat = ({
   icon: Icon,
@@ -58,8 +59,10 @@ export const Proof = () => (
       </div>
 
       <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-14">
-        <div className="reveal relative">
+        <div className="reveal relative pb-24 sm:pb-32 lg:pb-20 lg:pr-16">
           <div className="absolute -inset-4 -z-10 rounded-[2rem] bg-gradient-to-br from-primary/30 via-transparent to-secondary/30 blur-2xl" />
+
+          {/* Primary photo */}
           <div className="relative overflow-hidden rounded-3xl border border-white/15 bg-white/5 shadow-2xl backdrop-blur">
             <img
               src={premiacoes}
@@ -75,6 +78,22 @@ export const Proof = () => (
               <p className="mt-2 text-sm font-medium text-white/90">
                 Reconhecimento entre os destaques da RE/MAX Única Escolha.
               </p>
+            </div>
+          </div>
+
+          {/* Secondary photo — layered polaroid */}
+          <div className="absolute bottom-0 right-0 w-[65%] sm:w-[55%] lg:w-[60%] rotate-2 overflow-hidden rounded-2xl border-2 border-white/80 bg-white shadow-2xl ring-1 ring-black/20">
+            <img
+              src={premiacoes2}
+              alt="Denis Souza no palco com a equipe RE/MAX recebendo premiação regional, todos segurando troféus em formato de balão"
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-3 py-2">
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                <Award className="h-3 w-3 text-secondary" />
+                Premiação Regional · RE/MAX
+              </span>
             </div>
           </div>
         </div>
