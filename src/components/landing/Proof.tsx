@@ -38,6 +38,12 @@ export const Proof = () => (
       aria-hidden
       className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_30%_20%,hsl(354_80%_49%/0.15),transparent_50%),radial-gradient(circle_at_70%_80%,hsl(215_100%_45%/0.18),transparent_55%)]"
     />
+    <img
+      aria-hidden
+      src={balao}
+      alt=""
+      className="pointer-events-none absolute -right-16 top-1/2 hidden w-80 -translate-y-1/2 opacity-[0.07] md:block"
+    />
 
     <div className="container">
       <div className="reveal mb-14 text-center">
