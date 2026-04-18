@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { RemaxLogo } from "./RemaxLogo";
+import { RemaxLogo } from "@/components/RemaxLogo";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
