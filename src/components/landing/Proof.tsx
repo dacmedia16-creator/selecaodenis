@@ -1,5 +1,6 @@
 import { Award, Star, TrendingUp, Trophy } from "lucide-react";
 import { useCountUp } from "@/hooks/useCountUp";
+import balao from "@/assets/remax-balao.png";
 
 const Stat = ({
   icon: Icon,
