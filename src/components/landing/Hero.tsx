@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Award, MapPin, Sparkles, TrendingUp, Trophy } from "lucide-react";
-import denisHero from "@/assets/denis-hero.jpg";
+import denisHero from "@/assets/denis-real.png";
 import balao from "@/assets/remax-balao.png";
 
 export const Hero = () => (
@@ -72,13 +72,18 @@ export const Hero = () => (
       {/* Photo */}
       <div className="reveal relative mx-auto w-full max-w-md lg:max-w-none">
         <div aria-hidden className="absolute -inset-6 -z-10 gradient-cta rounded-[2rem] opacity-20 blur-2xl" />
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/40 bg-card shadow-elegant">
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/40 shadow-elegant gradient-cta">
+          {/* Subtle pattern overlay */}
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,hsl(0_0%_100%/0.25),transparent_60%)]"
+          />
           <img
             src={denisHero}
             alt="Denis Souza, corretor de imóveis na RE/MAX Única Escolha em Sorocaba/SP"
             width={1024}
             height={1280}
-            className="aspect-[4/5] w-full object-cover"
+            className="relative aspect-[4/5] w-full object-contain object-bottom drop-shadow-[0_20px_40px_hsl(0_0%_0%/0.35)]"
           />
           {/* Floating badge: location */}
           <div className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-background/90 px-3 py-1.5 text-xs font-semibold text-primary shadow-soft backdrop-blur">
