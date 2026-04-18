@@ -60,7 +60,7 @@ export const Proof = () => (
       </div>
 
       <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-14">
-        <div className="reveal relative pb-24 sm:pb-32 lg:pb-20 lg:pr-16">
+        <div className="reveal relative pb-28 sm:pb-36 lg:pb-24 lg:pr-20">
           <div className="absolute -inset-4 -z-10 rounded-[2rem] bg-gradient-to-br from-primary/30 via-transparent to-secondary/30 blur-2xl" />
 
           {/* Primary photo */}
@@ -82,8 +82,8 @@ export const Proof = () => (
             </div>
           </div>
 
-          {/* Secondary photo — layered polaroid */}
-          <div className="absolute bottom-0 right-0 w-[65%] sm:w-[55%] lg:w-[60%] rotate-2 overflow-hidden rounded-2xl border-2 border-white/80 bg-white shadow-2xl ring-1 ring-black/20">
+          {/* Secondary photo — group on stage */}
+          <div className="absolute bottom-0 right-0 w-[60%] sm:w-[52%] lg:w-[58%] rotate-2 overflow-hidden rounded-2xl border-2 border-white/80 bg-white shadow-2xl ring-1 ring-black/20">
             <img
               src={premiacoes2}
               alt="Denis Souza no palco com a equipe RE/MAX recebendo premiação regional, todos segurando troféus em formato de balão"
@@ -94,6 +94,22 @@ export const Proof = () => (
               <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-white">
                 <Award className="h-3 w-3 text-secondary" />
                 Premiação Regional · RE/MAX
+              </span>
+            </div>
+          </div>
+
+          {/* Tertiary photo — medal selfie */}
+          <div className="absolute -bottom-2 left-0 sm:left-2 lg:-left-4 w-[38%] sm:w-[32%] lg:w-[36%] -rotate-6 overflow-hidden rounded-2xl border-2 border-white/80 bg-white shadow-2xl ring-1 ring-black/20">
+            <img
+              src={premiacoes3}
+              alt="Denis Souza com medalha de premiação RE/MAX no pescoço"
+              className="aspect-[3/4] h-full w-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-2 py-1.5">
+              <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-white">
+                <Trophy className="h-2.5 w-2.5 text-secondary" />
+                Medalha RE/MAX
               </span>
             </div>
           </div>
