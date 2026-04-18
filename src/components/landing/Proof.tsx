@@ -3,6 +3,7 @@ import { useCountUp } from "@/hooks/useCountUp";
 import balao from "@/assets/remax-balao.png";
 import premiacoes from "@/assets/denis-premiacoes.jpg";
 import premiacoes2 from "@/assets/denis-premiacoes-2.jpg";
+import premiacoes3 from "@/assets/denis-premiacoes-3.jpg";
 
 const Stat = ({
   icon: Icon,
