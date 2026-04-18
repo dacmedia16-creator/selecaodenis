@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Award, MapPin, Sparkles, TrendingUp, Trophy } from "lucide-react";
 import denisHero from "@/assets/denis-hero.jpg";
+import balao from "@/assets/remax-balao.png";
 
 export const Hero = () => (
   <section className="relative overflow-hidden pt-28 pb-16 md:pt-36 md:pb-24">
@@ -99,15 +100,15 @@ export const Hero = () => (
         </div>
 
         {/* Floating RE/MAX balloon */}
-        <div className="absolute -right-3 -top-3 hidden h-20 w-20 animate-float md:block">
-          <div className="relative h-full w-full">
-            <div className="absolute inset-0 gradient-red rounded-full shadow-red-glow animate-pulse-ring" />
-            <div className="absolute inset-2 flex flex-col items-center justify-center rounded-full bg-white">
-              <span className="font-display text-[10px] font-extrabold leading-none text-primary">RE</span>
-              <span className="font-display text-[10px] font-extrabold leading-none text-secondary">MAX</span>
-            </div>
-            <div className="absolute -bottom-2 left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 bg-white" />
-          </div>
+        <div className="absolute -right-4 -top-6 h-24 w-24 animate-float md:-right-6 md:-top-10 md:h-32 md:w-32">
+          <div aria-hidden className="absolute inset-2 rounded-full bg-secondary/30 blur-2xl" />
+          <img
+            src={balao}
+            alt="Balão RE/MAX"
+            width={160}
+            height={160}
+            className="relative h-full w-full object-contain drop-shadow-[0_10px_25px_hsl(354_80%_49%/0.35)]"
+          />
         </div>
       </div>
     </div>
