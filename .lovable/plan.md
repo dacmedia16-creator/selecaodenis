@@ -1,19 +1,17 @@
 
-The user uploaded their real professional photo (Denis with arms crossed, blazer, transparent/white background) to replace the AI-generated placeholder in the Hero section.
+The user uploaded a real photo of Denis holding 2 RE/MAX balloon trophies and 4+ certificates ("CERTIFICADO Denis Fabio de Souza · RE/MAX ÚNICA ESCOLHA · 1º lugar em Team Leader · 2º Trimestre 2022"). This is gold for the **Proof** section — it's authentic social proof of the awards mentioned in the copy.
 
 ## Plan
 
-1. **Save asset** — copy `user-uploads://DenisfotoBanner.png` to `src/assets/denis-real.png`.
+1. **Save asset** — copy `user-uploads://IMG_5273.JPEG` to `src/assets/denis-premiacoes.jpg`.
 
-2. **Update `Hero.tsx`** — swap the import from `denis-hero.jpg` to the new `denis-real.png`. Since this photo has a transparent/white background and shows Denis from waist-up with arms crossed (different framing than the previous AI photo), adjust the presentation:
-   - Replace the `aspect-[4/5]` cropped frame with a layout that showcases the cutout figure better.
-   - Use a gradient backdrop (azul→vermelho RE/MAX) behind the photo so the transparent PNG pops.
-   - Keep `object-contain` instead of `object-cover` to avoid cropping the head/arms.
-   - Keep the floating location badge ("Sorocaba/SP"), the "Denis Souza · RE/MAX Única Escolha" info card, and the floating balloon — they all remain valuable.
-   - Slight adjustments: anchor photo to bottom of frame so the figure "stands" on the info card naturally.
+2. **Update `Proof.tsx`** — currently the section is text-only (stats + tags) on a dark gradient. Add the awards photo as a visual anchor:
+   - Restructure the layout to a 2-column grid on desktop (`lg:grid-cols-[1fr_1.1fr]`): photo on the left, stats + tags on the right.
+   - Keep the section heading at the top, full-width.
+   - Frame the photo in a rounded card (`rounded-3xl`) with a subtle white border and elegant shadow, plus a small floating badge overlay like "1º lugar — Team Leader · 2º Tri 2022" to make the certificate context legible even if the text in the photo isn't readable.
+   - On mobile: photo stacks above the stats, slightly smaller.
+   - Keep the decorative balloon watermark but reduce its prominence so it doesn't compete with the real photo.
 
-3. **Optionally add subtle photo accent in `Story.tsx`** — the storytelling section currently has no portrait; a smaller version of the real photo could reinforce the narrative. Will skip for now to keep scope tight (can add later if user requests).
+3. **No changes** to Hero, Story, or other sections — the awards photo belongs specifically in the Proof/Authority section.
 
-4. **Cleanup** — keep the old `denis-hero.jpg` file untouched (no need to delete; harmless).
-
-No backend, copy, or layout structure changes beyond the Hero photo treatment.
+Technical: pure visual update to one component, ES6 import of the new asset, responsive grid with Tailwind. No copy, backend, or layout changes elsewhere.
