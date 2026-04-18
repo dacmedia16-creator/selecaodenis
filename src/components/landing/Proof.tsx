@@ -33,7 +33,7 @@ const Stat = ({
 };
 
 export const Proof = () => (
-  <section className="relative overflow-hidden py-20 md:py-28">
+  <section className="relative isolate overflow-hidden py-20 md:py-28">
     <div aria-hidden className="absolute inset-0 -z-10 gradient-dark" />
     <div
       aria-hidden
