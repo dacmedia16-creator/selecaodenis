@@ -1,44 +1,43 @@
 
-The user wants to add a new section showcasing sold properties ("Imóveis Vendidos") using the 9 marketing flyers they uploaded. These are real proof of sales — perfect tangible social proof to complement the awards section.
+Tenho a doc da ZionTalk em mãos. API simples: POST `multipart/form-data` em `https://app.ziontalk.com/api/send_message/` com Basic Auth (API Key como username, senha vazia). Campos: `msg` e `mobile_phone`. Resposta 201 = sucesso.
 
-Looking at the images: they're vertical/square Brazilian real estate marketing flyers showing properties Denis sold, with "VENDIDO em X dias" stamps. They tell a powerful story: "I don't just have awards, I sell real properties — fast."
+## Plano
 
-## Plan
+**1. Ativar Lovable Cloud + criar tabela `leads`**
+   - Migração com colunas: `id`, `name`, `whatsapp`, `email`, `city`, `is_agent`, `attraction`, `created_at`.
+   - RLS: `INSERT` permitido para `anon` (formulário público); `SELECT` apenas para autenticados (futuro painel do Denis).
 
-**1. Save 9 assets** to `src/assets/vendidos/` (vendido-1.jpg through vendido-9.jpg).
+**2. Adicionar 2 secrets**
+   - `ZIONTALK_API_KEY` — chave gerada no painel ZionTalk (Denis precisa gerar e colar).
+   - `DENIS_WHATSAPP` — número do Denis em formato E.164 (ex: `+5515999999999`) que receberá a notificação.
 
-**2. Create new component `src/components/landing/Vendidos.tsx`** — a carousel/marquee section between Proof and WhatYouFind:
-   - Section header: eyebrow "Resultados Reais", title "Imóveis vendidos em tempo recorde", subtitle highlighting the speed (some sold in 24h, 10 days, 15 days).
-   - Use the existing shadcn `carousel` component (already in project) showing flyers in cards — 1 per view on mobile, 2 on tablet, 3 on desktop. Loop enabled, autoplay-friendly spacing.
-   - Each card: flyer image with rounded frame + subtle shadow + small badge overlay "VENDIDO" with the time-to-sell extracted (e.g., "24 horas", "10 dias", "15 dias", "45 dias", "90 dias", "120 dias", "150 dias", "Cannes Campolim", etc.).
-   - Below the carousel: 3 quick stats highlighting record times — e.g., "24h" venda mais rápida · "9+" imóveis destacados · "Campolim" região de atuação.
-   - Light background (matches Story/WhatYouFind tone) so it contrasts the dark Proof section above.
+**3. Criar Edge Function `submit-lead`** (`supabase/functions/submit-lead/index.ts`)
+   - CORS habilitado, `verify_jwt = false` (form público).
+   - Valida payload com Zod (mesmo schema do front).
+   - Insere na tabela `leads`.
+   - Monta mensagem formatada para o Denis:
+     ```
+     🔥 Novo lead — Landing RE/MAX
+     Nome: {name}
+     WhatsApp: {whatsapp}
+     E-mail: {email}
+     Cidade: {city}
+     Já é corretor: {sim/não}
+     Motivação: {attraction ou "—"}
+     ```
+   - POST para ZionTalk via `fetch` com `multipart/form-data` e header `Authorization: Basic base64(API_KEY:)`.
+   - Retorna `{ success: true }` mesmo se ZionTalk falhar (lead já está salvo no DB) — apenas loga o erro.
 
-**3. Wire into `src/pages/Index.tsx`** — insert `<Vendidos />` right after `<Proof />` and before `<WhatYouFind />`.
+**4. Atualizar `LeadForm.tsx`**
+   - Trocar o `setTimeout` simulado por `supabase.functions.invoke('submit-lead', { body: parsed.data })`.
+   - Em caso de erro do invoke, mostra toast de erro e NÃO redireciona pro WhatsApp.
+   - Em sucesso, mantém o fluxo atual (toast + abre wa.me + tela de sucesso).
 
-**4. No copy changes** to other sections.
+### Notas técnicas
+- Basic Auth no Deno: `"Basic " + btoa(apiKey + ":")`.
+- `mobile_phone` no formato `+5515999999999`.
+- Nenhuma mudança no wa.me redirect (continua abrindo a conversa pro lead falar com o Denis).
+- Auto-resposta pro lead fica como melhoria futura (a doc suporta, mas exigiria template aprovado pela Meta se quisermos via API oficial — o endpoint `send_message` simples deve funcionar pra canal já conectado).
 
-### Layout sketch
-
-```text
-┌──────────────────────────────────────────────┐
-│           RESULTADOS REAIS                   │
-│   Imóveis vendidos em tempo recorde          │
-│   Do anúncio à venda — em dias, não meses.   │
-│                                              │
-│  ◀  ┌────┐  ┌────┐  ┌────┐  ▶               │
-│     │flyer│ │flyer│ │flyer│                  │
-│     │ 24h │ │ 10d │ │ 15d │                  │
-│     └────┘  └────┘  └────┘                   │
-│                                              │
-│       24h  ·  9+ imóveis  ·  Sorocaba/SP     │
-└──────────────────────────────────────────────┘
-```
-
-### Technical notes
-
-- Reuse `@/components/ui/carousel` (Embla-based, already imported elsewhere).
-- ES6 imports for the 9 images from `src/assets/vendidos/`.
-- Reveal-on-scroll via existing `.reveal` class.
-- Responsive: `basis-full md:basis-1/2 lg:basis-1/3`.
-- Each card: `aspect-[4/5]` to handle the mostly-portrait flyer dimensions consistently with `object-cover`.
+### Próximos passos depois da aprovação
+Vou pedir as 2 informações: API Key da ZionTalk e o WhatsApp do Denis (E.164). Sem elas não consigo testar a integração de ponta a ponta.
