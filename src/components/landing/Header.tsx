@@ -23,10 +23,10 @@ export const Header = () => {
       <div className="container flex h-16 items-center justify-between md:h-20">
         <div className="flex items-center gap-3">
           <RemaxLogo />
-          <div className="hidden h-8 w-px bg-border md:block" />
+          <div className="hidden h-10 w-px bg-border md:block" />
           <div className="hidden flex-col leading-tight md:flex">
             <span className="font-display text-sm font-bold text-foreground">Denis Souza</span>
-            <span className="text-xs text-muted-foreground">Única Escolha · Sorocaba/SP</span>
+            <span className="text-xs text-muted-foreground">Sorocaba/SP</span>
           </div>
         </div>
         <a href="#formulario">

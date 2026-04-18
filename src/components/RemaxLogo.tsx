@@ -1,49 +1,30 @@
 import { cn } from "@/lib/utils";
-import balao from "@/assets/remax-balao.png";
+import logoUnica from "@/assets/remax-unica-escolha.png";
 
 interface RemaxLogoProps {
   className?: string;
   variant?: "light" | "dark";
-  showWordmark?: boolean;
 }
 
 /**
- * Official RE/MAX hot-air balloon logo.
+ * Official RE/MAX Única Escolha unit logo (includes CRECI 29886-J).
+ * - `dark` (default): renders the logo as-is on light backgrounds.
+ * - `light`: inverts the logo to pure white for dark backgrounds (footer).
  */
-export const RemaxLogo = ({ className, variant = "dark", showWordmark = true }: RemaxLogoProps) => {
+export const RemaxLogo = ({ className, variant = "dark" }: RemaxLogoProps) => {
   const isLight = variant === "light";
   return (
-    <div className={cn("flex items-center gap-2.5", className)}>
+    <div className={cn("flex items-center", className)}>
       <img
-        src={balao}
-        alt="RE/MAX"
-        width={48}
-        height={48}
-        className="h-10 w-auto object-contain drop-shadow-sm"
+        src={logoUnica}
+        alt="RE/MAX Única Escolha — CRECI 29886-J"
+        width={220}
+        height={88}
+        className={cn(
+          "h-14 w-auto object-contain md:h-16",
+          isLight && "brightness-0 invert",
+        )}
       />
-      {showWordmark && (
-        <div className="flex items-baseline gap-0.5 leading-none">
-          <span
-            className={cn(
-              "font-display text-xl font-extrabold tracking-tight",
-              isLight ? "text-white" : "text-primary",
-            )}
-          >
-            RE
-          </span>
-          <span className={cn("font-display text-xl font-extrabold", isLight ? "text-white/60" : "text-foreground/40")}>
-            /
-          </span>
-          <span
-            className={cn(
-              "font-display text-xl font-extrabold tracking-tight",
-              isLight ? "text-white" : "text-secondary",
-            )}
-          >
-            MAX
-          </span>
-        </div>
-      )}
     </div>
   );
 };
