@@ -1,24 +1,19 @@
 
-The user uploaded the official "RE/MAX Única Escolha" unit logo (with "IMOBILIÁRIA" on top and "CRECI 29886-J" badge). This is the proper unit branding and should replace the current text-based "RE/MAX + Denis Souza" combo in the header and footer.
+The user uploaded their real professional photo (Denis with arms crossed, blazer, transparent/white background) to replace the AI-generated placeholder in the Hero section.
 
 ## Plan
 
-1. **Save asset** — copy `user-uploads://Logo_REMAX_Unica.png` to `src/assets/remax-unica-escolha.png`.
+1. **Save asset** — copy `user-uploads://DenisfotoBanner.png` to `src/assets/denis-real.png`.
 
-2. **Refactor `RemaxLogo.tsx`** — replace the balloon+wordmark composition with the official unit logo image. Keep the `variant` prop:
-   - `dark` (default): logo as-is on light backgrounds (header)
-   - `light`: same logo wrapped in a subtle white-tinted container, OR use CSS `brightness-0 invert` filter so it reads on dark backgrounds (footer). Since the logo has gray "IMOBILIÁRIA" and "CRECI" text that won't read on dark, use `brightness-0 invert` for the light variant to render it fully white.
-   - Drop `showWordmark` prop (no longer needed — logo is self-contained).
+2. **Update `Hero.tsx`** — swap the import from `denis-hero.jpg` to the new `denis-real.png`. Since this photo has a transparent/white background and shows Denis from waist-up with arms crossed (different framing than the previous AI photo), adjust the presentation:
+   - Replace the `aspect-[4/5]` cropped frame with a layout that showcases the cutout figure better.
+   - Use a gradient backdrop (azul→vermelho RE/MAX) behind the photo so the transparent PNG pops.
+   - Keep `object-contain` instead of `object-cover` to avoid cropping the head/arms.
+   - Keep the floating location badge ("Sorocaba/SP"), the "Denis Souza · RE/MAX Única Escolha" info card, and the floating balloon — they all remain valuable.
+   - Slight adjustments: anchor photo to bottom of frame so the figure "stands" on the info card naturally.
 
-3. **Update `Header.tsx`** — the unit logo already contains "RE/MAX Única Escolha" text, so:
-   - Remove the redundant "Denis Souza · Única Escolha · Sorocaba/SP" sidecar text (now duplicates the logo).
-   - Replace with just "Denis Souza · Sorocaba/SP" as a smaller subtitle to keep the personal anchor.
-   - Increase logo height (h-12 to h-14) since it's wider/taller proportionally.
+3. **Optionally add subtle photo accent in `Story.tsx`** — the storytelling section currently has no portrait; a smaller version of the real photo could reinforce the narrative. Will skip for now to keep scope tight (can add later if user requests).
 
-4. **Footer** — `RemaxLogo variant="light"` will pick up the inverted version automatically.
+4. **Cleanup** — keep the old `denis-hero.jpg` file untouched (no need to delete; harmless).
 
-5. **Keep the balloon** in `Hero.tsx` (floating decorative element) and `Proof.tsx` (watermark) — they serve a different purpose (brand iconography vs unit identification).
-
-6. **CRECI compliance** — the logo includes "CRECI 29886-J" which is a regulatory requirement, so keeping it visible in header + footer is a plus.
-
-No backend or copy changes.
+No backend, copy, or layout structure changes beyond the Hero photo treatment.
