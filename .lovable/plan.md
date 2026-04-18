@@ -1,11 +1,16 @@
 
-The user wants me to verify the awards photo in the Proof section on desktop and mobile. This is a verification/testing task using the browser tool.
+The user uploaded another awards photo — Denis on stage with 4 other people, all holding RE/MAX balloon trophies in front of a big "REGIONAIS" backdrop. This is a great group/event shot complementing the existing solo photo with certificates.
 
 ## Plan
 
-1. Navigate to the preview at desktop size (1336x887, current viewport) and scroll to the Proof section.
-2. Screenshot to inspect the framing of the awards photo, the floating "1º lugar" badge, and the stats column alongside.
-3. Resize viewport to mobile (390x844) and screenshot the same section to confirm the photo stacks correctly above stats and isn't cropped/distorted.
-4. Report findings: framing quality, badge legibility, responsive behavior. If any issues are found (cropping, overlap, badge collision), propose fixes for approval.
+1. **Save asset** — copy `user-uploads://image-2.png` to `src/assets/denis-premiacoes-2.jpg`.
 
-No code changes in this plan — purely visual QA. If problems are found, I'll present a follow-up plan with adjustments.
+2. **Update `Proof.tsx`** — convert the single photo into a small 2-photo collage:
+   - Keep the main solo certificate photo as the primary (larger) card on the left.
+   - Add the new event photo as a smaller secondary card overlapping/offset (bottom-right of the primary), creating a layered "polaroid stack" feel.
+   - On mobile: stack the two photos vertically (primary first, secondary below at ~70% width, slightly inset).
+   - Both cards keep the rounded frame, white border, shadow.
+   - Move the "1º lugar — Team Leader · 2º Tri 2022" badge to overlay the primary photo (as today).
+   - Add a subtle caption tag on the secondary photo: "Premiação Regional · RE/MAX".
+
+3. **No copy changes** elsewhere. Pure visual addition.
