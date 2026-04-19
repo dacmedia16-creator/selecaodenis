@@ -137,10 +137,9 @@ export const Vendidos = () => {
           )}
         </div>
 
-        <div className="reveal mx-auto mt-14 grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="reveal mx-auto mt-14 grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2">
           {[
             { icon: Clock, value: "5 dias", label: "tempo recorde de venda" },
-            { icon: Home, value: "6", label: "imóveis em destaque" },
             { icon: MapPin, value: "Sorocaba/SP", label: "região de atuação" },
           ].map(({ icon: Icon, value, label }) => (
             <div
