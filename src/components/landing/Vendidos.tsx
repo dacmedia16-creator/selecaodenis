@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/carousel";
 import vSaintTropez from "@/assets/vendidos/vendido-saint-tropez.png";
 import vLessence from "@/assets/vendidos/vendido-lessence.png";
+import vLessenceVaranda from "@/assets/vendidos/vendido-lessence-varanda.png";
+import vSoleilQuebec from "@/assets/vendidos/vendido-soleil-quebec.png";
 
 type Vendido = {
   src: string;
