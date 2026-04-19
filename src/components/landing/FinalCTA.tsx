@@ -11,15 +11,15 @@ export const FinalCTA = () => (
 
     <div className="container max-w-4xl text-center">
       <div className="reveal">
-        <h2 className="font-display text-3xl font-extrabold leading-tight text-white md:text-5xl text-balance">
+        <h2 className="font-display text-3xl font-extrabold leading-tight md:text-5xl text-balance text-card-foreground">
           Sua próxima fase profissional pode começar agora.
         </h2>
-        <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/90 md:text-xl">
+        <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed md:text-xl text-muted-foreground">
           Se você já é corretor e quer crescer mais, ou deseja entrar no mercado imobiliário com treinamento,
           metodologia e oportunidade real de desenvolvimento — essa pode ser a chance de dar um novo passo na sua
           carreira.
         </p>
-        <p className="mx-auto mt-4 max-w-2xl text-base text-white/80 md:text-lg">
+        <p className="mx-auto mt-4 max-w-2xl text-base md:text-lg text-primary-deep">
           Minha história é a prova de que começar do zero não impede ninguém de crescer. O que faz diferença é estar no
           ambiente certo e agir com consistência.
         </p>
