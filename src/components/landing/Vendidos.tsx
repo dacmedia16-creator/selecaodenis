@@ -33,6 +33,18 @@ const vendidos: Vendido[] = [
     tempo: "Vendido em 150 dias",
     local: "Campolim, Sorocaba/SP",
   },
+  {
+    src: vLessenceVaranda,
+    alt: "Apartamento L'Essence Campolim — varanda — vendido por Denis Souza",
+    tempo: "Mais um vendido",
+    local: "Campolim, Sorocaba/SP",
+  },
+  {
+    src: vSoleilQuebec,
+    alt: "Apartamento Soleil de Québec vendido por Denis Souza",
+    tempo: "Vendido em 10 dias",
+    local: "Campolim, Sorocaba/SP",
+  },
 ];
 
 export const Vendidos = () => {
