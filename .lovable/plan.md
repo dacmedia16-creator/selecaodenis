@@ -1,28 +1,34 @@
 
-## Diagnóstico
+User wants to replace the carousel images in `Resultados Reais` (Vendidos.tsx) with the 2 new uploaded images.
 
-A imagem mostra um espaço gigante em branco entre o formulário e o final da página. Confirmei a causa olhando o código:
+Currently `Vendidos.tsx` shows 9 images (v1-v9). User uploaded only 2 new images (1.png Saint Tropez 120 dias, 2.png L'Essence Campolim 150 dias).
 
-- `FinalCTA` envolve todo o conteúdo num `<div class="reveal">` (opacity:0 inicial, vira opacity:1 quando ganha `.is-visible`).
-- `useRevealOnScroll` roda **uma única vez no mount**, captura todos `.reveal` existentes e observa via IntersectionObserver.
-- Problema: se o elemento `.reveal` for desmontado/remontado depois (ex: o `LeadForm` troca de markup quando `submitted=true`), ou se o usuário pular âncoras antes do JS rodar, o observer pode perder o elemento → fica `opacity:0` pra sempre, ocupando espaço mas invisível.
+Need to clarify: replace ALL 9 with just these 2, or add these 2 + keep some existing? Also the new images have rich info (location, days to sell) that differ from current generic "Vendido rápido / Sorocaba/SP" labels.
 
-No caso do usuário: ele rolou direto pro `#formulario`, depois pra baixo. O `FinalCTA.reveal` provavelmente nunca disparou intersect (rootMargin negativo + threshold 0.12 + tela mobile pequena podem ter contribuído também).
+Let me check what's reasonable. The new images already contain VENDIDO badge + days + property name baked in. Current carousel adds an external "Vendido" pill on top. With baked-in info, the external pill becomes redundant.
 
-## Correção (2 ajustes pequenos)
+## Plano
 
-**1. Tornar `useRevealOnScroll` mais robusto** (`src/hooks/useRevealOnScroll.ts`):
-- Reduzir `threshold` pra `0.05` e remover `rootMargin` negativo, pra disparar mais cedo.
-- Adicionar fallback: depois de 1.5s, qualquer `.reveal` que ainda esteja sem `.is-visible` recebe a classe automaticamente. Garante que nunca fique invisível por bug de observer.
-- Usar `MutationObserver` pra observar novos `.reveal` que apareçam depois do mount inicial (cobre o caso do `LeadForm` re-renderizar).
+**1. Substituir as 9 fotos atuais por essas 2 novas** no carousel `Vendidos.tsx`:
+- `src/assets/vendidos/vendido-saint-tropez.png` — Apto Saint Tropez, Campolim, vendido em 120 dias
+- `src/assets/vendidos/vendido-lessence.png` — L'Essence Campolim, vendido em 150 dias
 
-**2. Defensivo no CSS** (`src/index.css`):
-- Adicionar `@media (prefers-reduced-motion: reduce)` que força `.reveal { opacity: 1; transform: none; }`, pra usuários que desativaram animação não verem tela em branco.
+**2. Copiar as imagens** de `user-uploads://` para `src/assets/vendidos/` e importar no componente.
 
-## Resultado esperado
+**3. Ajustar metadados de cada card** com a info real que aparece nas peças:
+- Saint Tropez → "Vendido em 120 dias" / "Campolim, Sorocaba/SP"
+- L'Essence → "Vendido em 150 dias" / "Campolim, Sorocaba/SP"
 
-- O gap em branco some — `FinalCTA` aparece corretamente assim que entra na tela (ou no máximo 1.5s depois como fallback).
-- Sem regressão visual nas animações de scroll que funcionavam.
-- Sem mudanças na lógica de form/admin.
+**4. Remover imports antigos** (`v1`–`v9`) que não serão mais usados.
 
-Nenhum arquivo novo. 2 arquivos editados. Sem migration, sem mexer em backend.
+**5. Ajustar o card visualmente** já que as imagens têm proporção retrato (mais alta que largura) e já trazem o selo "VENDIDO" embutido:
+- Trocar `aspect-[4/5]` para `aspect-[3/4]` ou deixar imagem em altura natural com `object-contain` sobre fundo neutro, pra não cortar o selo nem o nome do imóvel.
+- **Remover o pill "Vendido" sobreposto** (redundante — já está na arte).
+
+**6. Stats de baixo** continuam (24h venda mais rápida, 9+ imóveis em destaque, Sorocaba/SP) — mas "9+ imóveis" não bate mais com 2 cards. Vou trocar por algo coerente:
+- "120 dias" → tempo médio de venda (ou manter "24h" se preferir)
+- "2 imóveis em destaque" — ou melhor: remover a contagem e deixar só "Sorocaba/SP" + um stat sobre experiência.
+
+**Pergunta antes de implementar:** as 2 imagens são mesmo as ÚNICAS que devem aparecer agora, ou você vai mandar mais depois? Se forem só essas 2 mesmo, faço o ajuste completo (incluindo atualizar os stats). Se vai mandar mais, eu deixo a estrutura pronta e atualizo os stats só quando todas chegarem.
+
+**Arquivos editados:** `src/components/landing/Vendidos.tsx` + 2 arquivos novos em `src/assets/vendidos/`. Sem mudanças em backend, rotas ou auth.
