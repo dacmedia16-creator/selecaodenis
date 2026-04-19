@@ -2,10 +2,12 @@ import { useEffect } from "react";
 
 /**
  * Adds `is-visible` to elements with `.reveal` when scrolled into view.
+ * - Observes elements added later via MutationObserver.
+ * - Fallback: forces visibility after 1.5s to avoid blank gaps if the
+ *   IntersectionObserver never fires (e.g. anchor jumps, layout quirks).
  */
 export const useRevealOnScroll = () => {
   useEffect(() => {
-    const els = document.querySelectorAll<HTMLElement>(".reveal");
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -15,9 +17,32 @@ export const useRevealOnScroll = () => {
           }
         });
       },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+      { threshold: 0.05, rootMargin: "0px" },
     );
-    els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+
+    const observeAll = () => {
+      document.querySelectorAll<HTMLElement>(".reveal:not(.is-visible)").forEach((el) => {
+        observer.observe(el);
+      });
+    };
+
+    observeAll();
+
+    // Watch for newly mounted .reveal elements (e.g. after state changes).
+    const mutationObserver = new MutationObserver(() => observeAll());
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+    // Safety fallback: after 1.5s, force-visible anything still hidden.
+    const fallback = window.setTimeout(() => {
+      document.querySelectorAll<HTMLElement>(".reveal:not(.is-visible)").forEach((el) => {
+        el.classList.add("is-visible");
+      });
+    }, 1500);
+
+    return () => {
+      observer.disconnect();
+      mutationObserver.disconnect();
+      window.clearTimeout(fallback);
+    };
   }, []);
 };

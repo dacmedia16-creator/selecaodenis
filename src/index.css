@@ -132,6 +132,13 @@
     opacity: 1;
     transform: translateY(0);
   }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
 
   @keyframes float {
     0%, 100% { transform: translateY(0); }
