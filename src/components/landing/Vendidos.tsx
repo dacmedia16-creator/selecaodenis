@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CheckCircle2, Clock, MapPin, Home } from "lucide-react";
+import { Clock, MapPin, Home } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -8,15 +8,8 @@ import {
   CarouselNext,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import v1 from "@/assets/vendidos/vendido-1.jpg";
-import v2 from "@/assets/vendidos/vendido-2.jpg";
-import v3 from "@/assets/vendidos/vendido-3.jpg";
-import v4 from "@/assets/vendidos/vendido-4.jpg";
-import v5 from "@/assets/vendidos/vendido-5.jpg";
-import v6 from "@/assets/vendidos/vendido-6.jpg";
-import v7 from "@/assets/vendidos/vendido-7.jpg";
-import v8 from "@/assets/vendidos/vendido-8.jpg";
-import v9 from "@/assets/vendidos/vendido-9.jpg";
+import vSaintTropez from "@/assets/vendidos/vendido-saint-tropez.png";
+import vLessence from "@/assets/vendidos/vendido-lessence.png";
 
 type Vendido = {
   src: string;
@@ -26,15 +19,18 @@ type Vendido = {
 };
 
 const vendidos: Vendido[] = [
-  { src: v1, alt: "Imóvel vendido por Denis Souza", tempo: "Vendido rápido", local: "Sorocaba/SP" },
-  { src: v2, alt: "Imóvel vendido por Denis Souza", tempo: "Vendido rápido", local: "Sorocaba/SP" },
-  { src: v3, alt: "Imóvel vendido por Denis Souza", tempo: "Vendido rápido", local: "Sorocaba/SP" },
-  { src: v4, alt: "Imóvel vendido por Denis Souza", tempo: "Vendido rápido", local: "Sorocaba/SP" },
-  { src: v5, alt: "Imóvel vendido por Denis Souza", tempo: "Vendido rápido", local: "Sorocaba/SP" },
-  { src: v6, alt: "Imóvel vendido por Denis Souza", tempo: "Vendido rápido", local: "Sorocaba/SP" },
-  { src: v7, alt: "Imóvel vendido — IEPE Golf", tempo: "Vendido rápido", local: "IEPE Golf" },
-  { src: v8, alt: "Imóvel vendido — Mont Blanc", tempo: "Vendido rápido", local: "Mont Blanc" },
-  { src: v9, alt: "Imóvel vendido por Denis Souza", tempo: "Vendido rápido", local: "Sorocaba/SP" },
+  {
+    src: vSaintTropez,
+    alt: "Apartamento Saint Tropez vendido por Denis Souza",
+    tempo: "Vendido em 120 dias",
+    local: "Campolim, Sorocaba/SP",
+  },
+  {
+    src: vLessence,
+    alt: "L'Essence Campolim vendido por Denis Souza",
+    tempo: "Vendido em 150 dias",
+    local: "Campolim, Sorocaba/SP",
+  },
 ];
 
 export const Vendidos = () => {
@@ -73,23 +69,19 @@ export const Vendidos = () => {
           <Carousel
             setApi={setApi}
             opts={{ align: "start", loop: true }}
-            className="mx-auto w-full max-w-6xl"
+            className="mx-auto w-full max-w-5xl"
           >
             <CarouselContent className="-ml-4">
               {vendidos.map((item, i) => (
-                <CarouselItem key={i} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
+                <CarouselItem key={i} className="pl-4 basis-full sm:basis-1/2">
                   <div className="group relative overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-smooth hover:-translate-y-1 hover:shadow-elegant">
-                    <div className="aspect-[4/5] overflow-hidden bg-muted">
+                    <div className="aspect-[3/4] overflow-hidden bg-muted">
                       <img
                         src={item.src}
                         alt={item.alt}
                         loading="lazy"
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
-                    </div>
-                    <div className="pointer-events-none absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-primary-foreground shadow-lg">
-                      <CheckCircle2 className="h-3 w-3" strokeWidth={3} />
-                      Vendido
                     </div>
                   </div>
                 </CarouselItem>
@@ -119,8 +111,8 @@ export const Vendidos = () => {
 
         <div className="reveal mx-auto mt-14 grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-3">
           {[
-            { icon: Clock, value: "24h", label: "venda mais rápida" },
-            { icon: Home, value: "9+", label: "imóveis em destaque" },
+            { icon: Clock, value: "120 dias", label: "tempo médio de venda" },
+            { icon: Home, value: "2", label: "imóveis em destaque" },
             { icon: MapPin, value: "Sorocaba/SP", label: "região de atuação" },
           ].map(({ icon: Icon, value, label }) => (
             <div
