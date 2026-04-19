@@ -24,7 +24,7 @@ export const FinalCTA = () => (
           ambiente certo e agir com consistência.
         </p>
 
-        <div className="mt-10 flex justify-end">
+        <div className="mt-10 flex justify-center">
           <a href="#formulario">
             <Button
               size="lg"
