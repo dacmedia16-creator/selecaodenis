@@ -24,7 +24,18 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Download, Loader2, LogOut, RefreshCw, Users } from "lucide-react";
+import { Download, Loader2, LogOut, RefreshCw, Trash2, Users } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Lead {
   id: string;
@@ -121,6 +132,17 @@ const Admin = () => {
     a.download = `leads-remax-${format(new Date(), "yyyy-MM-dd-HHmm")}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    const { error } = await supabase.from("leads").delete().eq("id", id);
+    if (error) {
+      console.error("delete lead:", error);
+      toast.error("Erro ao excluir lead.");
+      return;
+    }
+    setLeads((prev) => prev.filter((l) => l.id !== id));
+    toast.success(`Lead de ${name} excluído.`);
   };
 
   const clearFilters = () => {
@@ -247,6 +269,7 @@ const Admin = () => {
                     <TableHead>Corretor</TableHead>
                     <TableHead>Motivação</TableHead>
                     <TableHead className="text-right">Recebido</TableHead>
+                    <TableHead className="w-12 text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -281,6 +304,37 @@ const Admin = () => {
                       </TableCell>
                       <TableCell className="whitespace-nowrap text-right text-sm text-muted-foreground">
                         {format(new Date(l.created_at), "dd/MM/yy HH:mm", { locale: ptBR })}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                              aria-label={`Excluir lead de ${l.name}`}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Excluir este lead?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Esta ação não pode ser desfeita. O lead de <strong>{l.name}</strong> ({l.email}) será removido permanentemente.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDelete(l.id, l.name)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Excluir
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </TableCell>
                     </TableRow>
                   ))}
