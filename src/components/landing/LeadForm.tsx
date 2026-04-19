@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { CheckCircle2, Loader2, Send, ShieldCheck } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const leadSchema = z.object({
   name: z.string().trim().min(2, "Informe seu nome").max(100),
@@ -62,9 +63,15 @@ export const LeadForm = () => {
     setSubmitting(true);
 
     try {
-      // Lead submission will be wired to Lovable Cloud + Zion API in the next step.
-      // For now we simulate success and proceed with the WhatsApp redirect.
-      await new Promise((r) => setTimeout(r, 600));
+      const { data, error } = await supabase.functions.invoke("submit-lead", {
+        body: parsed.data,
+      });
+
+      if (error || !data?.success) {
+        console.error("submit-lead error:", error, data);
+        toast.error("Não foi possível enviar agora. Tente novamente em instantes.");
+        return;
+      }
 
       setSubmitted(true);
       toast.success("Recebemos seus dados! Abrindo WhatsApp...");
@@ -72,6 +79,7 @@ export const LeadForm = () => {
       const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
       window.open(url, "_blank", "noopener,noreferrer");
     } catch (err) {
+      console.error("submit-lead exception:", err);
       toast.error("Não foi possível enviar. Tente novamente em instantes.");
     } finally {
       setSubmitting(false);
