@@ -1,23 +1,41 @@
 
-Adicionar 2 novos imóveis vendidos ao carousel "Resultados Reais": L'Essence Campolim (sem prazo informado, marca "MAIS UM VENDIDO!") e Soleil de Québec (vendido em 10 dias).
+Usuário enviou 2 novas peças do Denis e mensagem vazia. Pelo contexto recente (sempre adicionando ao carousel "Resultados Reais"), assumo que quer adicionar essas 2 também.
 
-Espera — já tem um L'Essence Campolim no carousel atual. As novas imagens são variações/peças diferentes do mesmo apartamento (a atual mostra interior, a nova mostra varanda). Preciso confirmar com o usuário se é pra **adicionar** as 2 novas (ficando 4 cards) ou **substituir** alguma.
+**Análise das imagens:**
+- `5.png` → APTO Saint Tropez Campolim, vendido em **120 dias** — **JÁ EXISTE** no carousel (mesmo imóvel, mesmo prazo, mas é uma peça/foto diferente — sala em vez do que já está lá)
+- `6.png` → Ibéria Campolim, vendido em **45 dias** — novo imóvel
+
+Estado atual do carousel (4 cards): Saint Tropez (120d), L'Essence interior (150d), L'Essence varanda (mais um vendido), Soleil de Québec (10d).
 
 ## Plano
 
-**1. Adicionar as 2 novas peças ao array `vendidos` em `Vendidos.tsx`:**
-- `vendido-lessence-varanda.png` → "APTO L'Essence Campolim" / "Campolim, Sorocaba/SP" (sem prazo específico — usar "Mais um vendido")
-- `vendido-soleil-quebec.png` → "Vendido em 10 dias" / "Campolim, Sorocaba/SP"
+**1. Adicionar Ibéria Campolim** (novo imóvel, 45 dias) ao array `vendidos`:
+- `vendido-iberia-campolim.png` → "Vendido em 45 dias" / "Campolim, Sorocaba/SP"
 
-**2. Copiar as 2 imagens** de `user-uploads://3.png` e `user-uploads://4.png` para `src/assets/vendidos/`.
+**2. Sobre o Saint Tropez (5.png):** já existe um card desse imóvel com mesmo prazo (120d). A peça nova é outra foto/arte do mesmo apartamento. Não faz sentido ter 2 cards do mesmo imóvel com mesmo prazo — cria redundância.
 
-**3. Total de 4 cards** no carousel (Saint Tropez, L'Essence interior, L'Essence varanda, Soleil de Québec). O Embla com `basis-1/2` fica perfeito — usuário vê 2 por vez no desktop, 1 no mobile, e navega pelas setas/dots.
+**Pergunta:** o que fazer com a 5.png (Saint Tropez sala)?
+- (a) **Substituir** a foto atual do Saint Tropez por essa nova (mantendo 5 cards no total — só troca a arte)
+- (b) **Adicionar como card separado** (fica com 2 cards Saint Tropez, total 6 cards)
+- (c) **Ignorar** (só adiciona Ibéria, total 5 cards)
 
-**4. Atualizar os stats de baixo:**
-- "10 dias" → tempo recorde (substituindo "120 dias" — fica mais impactante)
-- "4" imóveis em destaque (substituindo "2")
+Vou assumir **(a) substituir** por padrão (mais limpo, mesma lógica que usamos com L'Essence quando tinha varanda + interior — embora ali mantivemos os 2). Se preferir outra opção, me avisa.
+
+**3. Total final:** 5 cards no carousel:
+1. Saint Tropez — 120 dias (foto nova/atualizada)
+2. L'Essence interior — 150 dias
+3. L'Essence varanda — mais um vendido
+4. Soleil de Québec — 10 dias
+5. Ibéria Campolim — 45 dias (novo)
+
+**4. Stats de baixo:**
+- "10 dias" tempo recorde — mantém (Soleil ainda é o mais rápido)
+- "5" imóveis em destaque (era 4)
 - "Sorocaba/SP" — mantém
 
-**Pergunta antes:** o L'Essence interior (atual, "Vendido em 150 dias") deve continuar OU a peça nova da varanda substitui ela? Como é o mesmo imóvel, geralmente faz sentido manter só uma — provavelmente a versão mais nova/melhor (a da varanda tem vista mais impactante).
+**Arquivos:**
+- `src/components/landing/Vendidos.tsx` — atualizar import + array + stat
+- `src/assets/vendidos/vendido-saint-tropez.png` — substituir pela 5.png
+- `src/assets/vendidos/vendido-iberia-campolim.png` — criar com 6.png
 
-**Arquivos:** `src/components/landing/Vendidos.tsx` + 2 imagens novas em `src/assets/vendidos/`. Sem backend.
+Sem backend, sem rotas novas.
