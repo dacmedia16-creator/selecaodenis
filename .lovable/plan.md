@@ -1,34 +1,23 @@
 
-User wants to replace the carousel images in `Resultados Reais` (Vendidos.tsx) with the 2 new uploaded images.
+Adicionar 2 novos imóveis vendidos ao carousel "Resultados Reais": L'Essence Campolim (sem prazo informado, marca "MAIS UM VENDIDO!") e Soleil de Québec (vendido em 10 dias).
 
-Currently `Vendidos.tsx` shows 9 images (v1-v9). User uploaded only 2 new images (1.png Saint Tropez 120 dias, 2.png L'Essence Campolim 150 dias).
-
-Need to clarify: replace ALL 9 with just these 2, or add these 2 + keep some existing? Also the new images have rich info (location, days to sell) that differ from current generic "Vendido rápido / Sorocaba/SP" labels.
-
-Let me check what's reasonable. The new images already contain VENDIDO badge + days + property name baked in. Current carousel adds an external "Vendido" pill on top. With baked-in info, the external pill becomes redundant.
+Espera — já tem um L'Essence Campolim no carousel atual. As novas imagens são variações/peças diferentes do mesmo apartamento (a atual mostra interior, a nova mostra varanda). Preciso confirmar com o usuário se é pra **adicionar** as 2 novas (ficando 4 cards) ou **substituir** alguma.
 
 ## Plano
 
-**1. Substituir as 9 fotos atuais por essas 2 novas** no carousel `Vendidos.tsx`:
-- `src/assets/vendidos/vendido-saint-tropez.png` — Apto Saint Tropez, Campolim, vendido em 120 dias
-- `src/assets/vendidos/vendido-lessence.png` — L'Essence Campolim, vendido em 150 dias
+**1. Adicionar as 2 novas peças ao array `vendidos` em `Vendidos.tsx`:**
+- `vendido-lessence-varanda.png` → "APTO L'Essence Campolim" / "Campolim, Sorocaba/SP" (sem prazo específico — usar "Mais um vendido")
+- `vendido-soleil-quebec.png` → "Vendido em 10 dias" / "Campolim, Sorocaba/SP"
 
-**2. Copiar as imagens** de `user-uploads://` para `src/assets/vendidos/` e importar no componente.
+**2. Copiar as 2 imagens** de `user-uploads://3.png` e `user-uploads://4.png` para `src/assets/vendidos/`.
 
-**3. Ajustar metadados de cada card** com a info real que aparece nas peças:
-- Saint Tropez → "Vendido em 120 dias" / "Campolim, Sorocaba/SP"
-- L'Essence → "Vendido em 150 dias" / "Campolim, Sorocaba/SP"
+**3. Total de 4 cards** no carousel (Saint Tropez, L'Essence interior, L'Essence varanda, Soleil de Québec). O Embla com `basis-1/2` fica perfeito — usuário vê 2 por vez no desktop, 1 no mobile, e navega pelas setas/dots.
 
-**4. Remover imports antigos** (`v1`–`v9`) que não serão mais usados.
+**4. Atualizar os stats de baixo:**
+- "10 dias" → tempo recorde (substituindo "120 dias" — fica mais impactante)
+- "4" imóveis em destaque (substituindo "2")
+- "Sorocaba/SP" — mantém
 
-**5. Ajustar o card visualmente** já que as imagens têm proporção retrato (mais alta que largura) e já trazem o selo "VENDIDO" embutido:
-- Trocar `aspect-[4/5]` para `aspect-[3/4]` ou deixar imagem em altura natural com `object-contain` sobre fundo neutro, pra não cortar o selo nem o nome do imóvel.
-- **Remover o pill "Vendido" sobreposto** (redundante — já está na arte).
+**Pergunta antes:** o L'Essence interior (atual, "Vendido em 150 dias") deve continuar OU a peça nova da varanda substitui ela? Como é o mesmo imóvel, geralmente faz sentido manter só uma — provavelmente a versão mais nova/melhor (a da varanda tem vista mais impactante).
 
-**6. Stats de baixo** continuam (24h venda mais rápida, 9+ imóveis em destaque, Sorocaba/SP) — mas "9+ imóveis" não bate mais com 2 cards. Vou trocar por algo coerente:
-- "120 dias" → tempo médio de venda (ou manter "24h" se preferir)
-- "2 imóveis em destaque" — ou melhor: remover a contagem e deixar só "Sorocaba/SP" + um stat sobre experiência.
-
-**Pergunta antes de implementar:** as 2 imagens são mesmo as ÚNICAS que devem aparecer agora, ou você vai mandar mais depois? Se forem só essas 2 mesmo, faço o ajuste completo (incluindo atualizar os stats). Se vai mandar mais, eu deixo a estrutura pronta e atualizo os stats só quando todas chegarem.
-
-**Arquivos editados:** `src/components/landing/Vendidos.tsx` + 2 arquivos novos em `src/assets/vendidos/`. Sem mudanças em backend, rotas ou auth.
+**Arquivos:** `src/components/landing/Vendidos.tsx` + 2 imagens novas em `src/assets/vendidos/`. Sem backend.
