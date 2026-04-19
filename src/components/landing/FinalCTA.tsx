@@ -24,15 +24,17 @@ export const FinalCTA = () => (
           ambiente certo e agir com consistência.
         </p>
 
-        <a href="#formulario">
-          <Button
-            size="lg"
-            className="mt-10 h-14 bg-white px-8 text-base font-bold text-primary shadow-elegant hover:bg-white/95"
-          >
-            Quero conversar sobre essa oportunidade
-            <ArrowRight className="h-5 w-5" />
-          </Button>
-        </a>
+        <div className="mt-10 flex justify-end">
+          <a href="#formulario">
+            <Button
+              size="lg"
+              className="h-14 bg-white px-8 text-base font-bold text-primary shadow-elegant hover:bg-white/95"
+            >
+              Quero conversar sobre essa oportunidade
+              <ArrowRight className="h-5 w-5" />
+            </Button>
+          </a>
+        </div>
       </div>
     </div>
   </section>
