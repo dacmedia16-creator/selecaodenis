@@ -71,12 +71,14 @@ export const Proof = () => (
               className="h-full w-full object-cover"
               loading="lazy"
             />
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-5">
+            <div className="absolute left-0 right-0 top-4 flex justify-center px-4">
               <div className="inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-1.5 text-xs font-bold text-secondary-foreground shadow-lg">
                 <Trophy className="h-3.5 w-3.5" />
                 1º lugar — Team Leader · 2º Tri 2022
               </div>
-              <p className="mt-2 text-sm font-medium text-white/90">
+            </div>
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-5">
+              <p className="text-sm font-medium text-white/90">
                 Reconhecimento entre os destaques da RE/MAX Única Escolha.
               </p>
             </div>
