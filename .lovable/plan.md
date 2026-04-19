@@ -1,43 +1,41 @@
 
-Tenho a doc da ZionTalk em mãos. API simples: POST `multipart/form-data` em `https://app.ziontalk.com/api/send_message/` com Basic Auth (API Key como username, senha vazia). Campos: `msg` e `mobile_phone`. Resposta 201 = sucesso.
+The user wants me to test the form end-to-end. This requires browser automation (to fill the form) plus checking DB and edge function logs. All of this needs the browser tool + supabase tools — these are available in default mode after plan approval.
 
-## Plano
+Let me present a concise plan for the test.
 
-**1. Ativar Lovable Cloud + criar tabela `leads`**
-   - Migração com colunas: `id`, `name`, `whatsapp`, `email`, `city`, `is_agent`, `attraction`, `created_at`.
-   - RLS: `INSERT` permitido para `anon` (formulário público); `SELECT` apenas para autenticados (futuro painel do Denis).
+## Plano de teste end-to-end
 
-**2. Adicionar 2 secrets**
-   - `ZIONTALK_API_KEY` — chave gerada no painel ZionTalk (Denis precisa gerar e colar).
-   - `DENIS_WHATSAPP` — número do Denis em formato E.164 (ex: `+5515999999999`) que receberá a notificação.
+**1. Abrir o preview no /#formulario (viewport mobile, já que o usuário está em 390x844)**
 
-**3. Criar Edge Function `submit-lead`** (`supabase/functions/submit-lead/index.ts`)
-   - CORS habilitado, `verify_jwt = false` (form público).
-   - Valida payload com Zod (mesmo schema do front).
-   - Insere na tabela `leads`.
-   - Monta mensagem formatada para o Denis:
-     ```
-     🔥 Novo lead — Landing RE/MAX
-     Nome: {name}
-     WhatsApp: {whatsapp}
-     E-mail: {email}
-     Cidade: {city}
-     Já é corretor: {sim/não}
-     Motivação: {attraction ou "—"}
-     ```
-   - POST para ZionTalk via `fetch` com `multipart/form-data` e header `Authorization: Basic base64(API_KEY:)`.
-   - Retorna `{ success: true }` mesmo se ZionTalk falhar (lead já está salvo no DB) — apenas loga o erro.
+**2. Preencher o formulário com dados de teste**
+- Nome: "Teste Lovable"
+- WhatsApp: "(15) 99999-0000"
+- E-mail: "teste-lovable@exemplo.com"
+- Cidade: "Sorocaba/SP"
+- Já é corretor: "Não, quero entrar"
+- Motivação: "Teste automatizado de integração ZionTalk"
 
-**4. Atualizar `LeadForm.tsx`**
-   - Trocar o `setTimeout` simulado por `supabase.functions.invoke('submit-lead', { body: parsed.data })`.
-   - Em caso de erro do invoke, mostra toast de erro e NÃO redireciona pro WhatsApp.
-   - Em sucesso, mantém o fluxo atual (toast + abre wa.me + tela de sucesso).
+**3. Enviar e observar**
+- Confirmar toast de sucesso
+- Confirmar tela de sucesso ("Cadastro recebido!")
+- Verificar se a aba do wa.me foi aberta (via console/network logs)
 
-### Notas técnicas
-- Basic Auth no Deno: `"Basic " + btoa(apiKey + ":")`.
-- `mobile_phone` no formato `+5515999999999`.
-- Nenhuma mudança no wa.me redirect (continua abrindo a conversa pro lead falar com o Denis).
-- Auto-resposta pro lead fica como melhoria futura (a doc suporta, mas exigiria template aprovado pela Meta se quisermos via API oficial — o endpoint `send_message` simples deve funcionar pra canal já conectado).
+**4. Verificar persistência no banco**
+- Query `SELECT * FROM leads WHERE email = 'teste-lovable@exemplo.com'`
+- Confirmar que o registro existe com os dados certos
 
-### Próximos passos depois da aprovação
-Vou pedir as 2 informações: API Key da ZionTalk e o WhatsApp do Denis (E.164). Sem elas não consigo testar a integração de ponta a ponta.
+**5. Verificar disparo da ZionTalk**
+- Ler logs da edge function `submit-lead`
+- Procurar por `[submit-lead] ZionTalk OK: 201` (sucesso) ou `ZionTalk failed` (erro)
+- Se falhar, reportar status code + body retornado pela ZionTalk
+
+**6. Limpar (opcional)**
+- Não vou deletar o lead de teste — fica no banco como prova do teste. Se você quiser, depois eu removo.
+
+**7. Reportar resultados** com 3 checkmarks claros:
+- [ ] Lead salvo no DB
+- [ ] Notificação ZionTalk enviada (Denis precisa confirmar visualmente que chegou no WhatsApp dele)
+- [ ] wa.me aberto pro lead
+
+### Observação importante
+Eu consigo confirmar (1) e (3) automaticamente. Para (2), só consigo confirmar que **a ZionTalk respondeu 201/sucesso** — a confirmação visual de que a mensagem chegou no WhatsApp do Denis depende dele olhar o celular. Vou reportar exatamente o que a API retornou.
