@@ -13,6 +13,7 @@ import vLessence from "@/assets/vendidos/vendido-lessence.png";
 import vLessenceVaranda from "@/assets/vendidos/vendido-lessence-varanda.png";
 import vSoleilQuebec from "@/assets/vendidos/vendido-soleil-quebec.png";
 import vIberiaCampolim from "@/assets/vendidos/vendido-iberia-campolim.png";
+import vRaizesCampolim from "@/assets/vendidos/vendido-raizes-campolim.png";
 
 type Vendido = {
   src: string;
@@ -50,6 +51,12 @@ const vendidos: Vendido[] = [
     src: vIberiaCampolim,
     alt: "Apartamento Ibéria Campolim vendido por Denis Souza",
     tempo: "Vendido em 45 dias",
+    local: "Campolim, Sorocaba/SP",
+  },
+  {
+    src: vRaizesCampolim,
+    alt: "Condomínio Raízes Campolim vendido por Denis Souza",
+    tempo: "Vendido em 5 dias",
     local: "Campolim, Sorocaba/SP",
   },
 ];
@@ -132,8 +139,8 @@ export const Vendidos = () => {
 
         <div className="reveal mx-auto mt-14 grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-3">
           {[
-            { icon: Clock, value: "10 dias", label: "tempo recorde de venda" },
-            { icon: Home, value: "5", label: "imóveis em destaque" },
+            { icon: Clock, value: "5 dias", label: "tempo recorde de venda" },
+            { icon: Home, value: "6", label: "imóveis em destaque" },
             { icon: MapPin, value: "Sorocaba/SP", label: "região de atuação" },
           ].map(({ icon: Icon, value, label }) => (
             <div
