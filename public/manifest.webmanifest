@@ -2,7 +2,7 @@
   "name": "RE/MAX Denis Souza",
   "short_name": "RE/MAX Denis",
   "description": "Carreira no mercado imobiliário com Denis Souza — RE/MAX Única Escolha",
-  "start_url": "/",
+  "start_url": "/admin",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
