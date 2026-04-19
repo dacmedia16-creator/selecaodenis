@@ -27,7 +27,7 @@ type LeadFormData = z.infer<typeof leadSchema>;
 
 // TODO: Replace with the real WhatsApp number once provided.
 // Format: country code + DDD + number, digits only.
-const WHATSAPP_NUMBER = "5515999999999";
+const WHATSAPP_NUMBER = "5515981788214";
 const WHATSAPP_MESSAGE =
   "Olá, Denis! Acabei de ver sua página sobre a oportunidade na RE/MAX Única Escolha e quero saber mais sobre como posso fazer parte.";
 
