@@ -1,28 +1,34 @@
 
-## Diagnóstico
+User está no mobile (390px), na seção FinalCTA. Ele copiou o texto do `<h2>` + 2 parágrafos e disse "não está aparecendo, colocar outra cor de letra".
 
-A imagem mostra um espaço gigante em branco entre o formulário e o final da página. Confirmei a causa olhando o código:
+Olhando o `FinalCTA.tsx`:
+- Fundo: `gradient-cta` = linear-gradient azul → vermelho (`hsl(215 100% 32%)` → `hsl(354 80% 49%)`)
+- Texto h2: `text-white` ✓
+- Parágrafos: `text-white/90` e `text-white/80`
 
-- `FinalCTA` envolve todo o conteúdo num `<div class="reveal">` (opacity:0 inicial, vira opacity:1 quando ganha `.is-visible`).
-- `useRevealOnScroll` roda **uma única vez no mount**, captura todos `.reveal` existentes e observa via IntersectionObserver.
-- Problema: se o elemento `.reveal` for desmontado/remontado depois (ex: o `LeadForm` troca de markup quando `submitted=true`), ou se o usuário pular âncoras antes do JS rodar, o observer pode perder o elemento → fica `opacity:0` pra sempre, ocupando espaço mas invisível.
+Em tese branco sobre azul/vermelho deveria ter contraste OK. Mas o user reporta que não vê. Possíveis causas:
+1. Os overlays radiais brancos (`bg-[radial-gradient(...white/0.18...)]`) podem estar lavando o fundo no meio, deixando branco-sobre-branco em pontos.
+2. `text-white/80` em cima de gradiente claro fica muito fraco no mobile.
+3. Possivelmente o `.reveal` ainda está causando opacity baixa em algum momento — mas já corrigimos isso.
 
-No caso do usuário: ele rolou direto pro `#formulario`, depois pra baixo. O `FinalCTA.reveal` provavelmente nunca disparou intersect (rootMargin negativo + threshold 0.12 + tela mobile pequena podem ter contribuído também).
+Solução simples e direta: aumentar contraste do texto. Como o user pediu "outra cor", vou propor:
 
-## Correção (2 ajustes pequenos)
+## Plano
 
-**1. Tornar `useRevealOnScroll` mais robusto** (`src/hooks/useRevealOnScroll.ts`):
-- Reduzir `threshold` pra `0.05` e remover `rootMargin` negativo, pra disparar mais cedo.
-- Adicionar fallback: depois de 1.5s, qualquer `.reveal` que ainda esteja sem `.is-visible` recebe a classe automaticamente. Garante que nunca fique invisível por bug de observer.
-- Usar `MutationObserver` pra observar novos `.reveal` que apareçam depois do mount inicial (cobre o caso do `LeadForm` re-renderizar).
+**Editar `src/components/landing/FinalCTA.tsx`:**
 
-**2. Defensivo no CSS** (`src/index.css`):
-- Adicionar `@media (prefers-reduced-motion: reduce)` que força `.reveal { opacity: 1; transform: none; }`, pra usuários que desativaram animação não verem tela em branco.
+1. **Reduzir os overlays brancos** que clareiam o fundo no centro (de `white/0.18` e `white/0.12` para `white/0.08` e `white/0.05`), pra manter o gradiente azul/vermelho saturado e garantir contraste com texto branco.
 
-## Resultado esperado
+2. **Reforçar o texto:**
+   - `<h2>`: manter branco, mas adicionar `drop-shadow-lg` (sombra escura) pra destacar de qualquer ponto claro do gradiente.
+   - 1º `<p>`: subir de `text-white/90` para `text-white` com `drop-shadow`.
+   - 2º `<p>`: subir de `text-white/80` para `text-white/95` com `drop-shadow`.
 
-- O gap em branco some — `FinalCTA` aparece corretamente assim que entra na tela (ou no máximo 1.5s depois como fallback).
-- Sem regressão visual nas animações de scroll que funcionavam.
-- Sem mudanças na lógica de form/admin.
+3. Botão CTA já tem `bg-white text-primary` — fica como está, contraste perfeito.
 
-Nenhum arquivo novo. 2 arquivos editados. Sem migration, sem mexer em backend.
+**Resultado:** texto fica nítido e legível no mobile, sem mudar o visual geral da seção (fundo continua sendo o gradiente azul→vermelho da marca).
+
+Nenhum arquivo novo. 1 arquivo editado. Sem backend.
+
+### Dica extra pro user
+Pra mudanças simples de cor/texto como essa, dá pra usar o **Visual Edits** (botão de editar no canto inferior esquerdo do chat) — é grátis e instantâneo. Vou mencionar isso depois de aplicar.
