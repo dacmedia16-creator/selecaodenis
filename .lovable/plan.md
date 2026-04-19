@@ -1,41 +1,28 @@
 
-The user wants me to test the form end-to-end. This requires browser automation (to fill the form) plus checking DB and edge function logs. All of this needs the browser tool + supabase tools — these are available in default mode after plan approval.
+## Diagnóstico
 
-Let me present a concise plan for the test.
+A imagem mostra um espaço gigante em branco entre o formulário e o final da página. Confirmei a causa olhando o código:
 
-## Plano de teste end-to-end
+- `FinalCTA` envolve todo o conteúdo num `<div class="reveal">` (opacity:0 inicial, vira opacity:1 quando ganha `.is-visible`).
+- `useRevealOnScroll` roda **uma única vez no mount**, captura todos `.reveal` existentes e observa via IntersectionObserver.
+- Problema: se o elemento `.reveal` for desmontado/remontado depois (ex: o `LeadForm` troca de markup quando `submitted=true`), ou se o usuário pular âncoras antes do JS rodar, o observer pode perder o elemento → fica `opacity:0` pra sempre, ocupando espaço mas invisível.
 
-**1. Abrir o preview no /#formulario (viewport mobile, já que o usuário está em 390x844)**
+No caso do usuário: ele rolou direto pro `#formulario`, depois pra baixo. O `FinalCTA.reveal` provavelmente nunca disparou intersect (rootMargin negativo + threshold 0.12 + tela mobile pequena podem ter contribuído também).
 
-**2. Preencher o formulário com dados de teste**
-- Nome: "Teste Lovable"
-- WhatsApp: "(15) 99999-0000"
-- E-mail: "teste-lovable@exemplo.com"
-- Cidade: "Sorocaba/SP"
-- Já é corretor: "Não, quero entrar"
-- Motivação: "Teste automatizado de integração ZionTalk"
+## Correção (2 ajustes pequenos)
 
-**3. Enviar e observar**
-- Confirmar toast de sucesso
-- Confirmar tela de sucesso ("Cadastro recebido!")
-- Verificar se a aba do wa.me foi aberta (via console/network logs)
+**1. Tornar `useRevealOnScroll` mais robusto** (`src/hooks/useRevealOnScroll.ts`):
+- Reduzir `threshold` pra `0.05` e remover `rootMargin` negativo, pra disparar mais cedo.
+- Adicionar fallback: depois de 1.5s, qualquer `.reveal` que ainda esteja sem `.is-visible` recebe a classe automaticamente. Garante que nunca fique invisível por bug de observer.
+- Usar `MutationObserver` pra observar novos `.reveal` que apareçam depois do mount inicial (cobre o caso do `LeadForm` re-renderizar).
 
-**4. Verificar persistência no banco**
-- Query `SELECT * FROM leads WHERE email = 'teste-lovable@exemplo.com'`
-- Confirmar que o registro existe com os dados certos
+**2. Defensivo no CSS** (`src/index.css`):
+- Adicionar `@media (prefers-reduced-motion: reduce)` que força `.reveal { opacity: 1; transform: none; }`, pra usuários que desativaram animação não verem tela em branco.
 
-**5. Verificar disparo da ZionTalk**
-- Ler logs da edge function `submit-lead`
-- Procurar por `[submit-lead] ZionTalk OK: 201` (sucesso) ou `ZionTalk failed` (erro)
-- Se falhar, reportar status code + body retornado pela ZionTalk
+## Resultado esperado
 
-**6. Limpar (opcional)**
-- Não vou deletar o lead de teste — fica no banco como prova do teste. Se você quiser, depois eu removo.
+- O gap em branco some — `FinalCTA` aparece corretamente assim que entra na tela (ou no máximo 1.5s depois como fallback).
+- Sem regressão visual nas animações de scroll que funcionavam.
+- Sem mudanças na lógica de form/admin.
 
-**7. Reportar resultados** com 3 checkmarks claros:
-- [ ] Lead salvo no DB
-- [ ] Notificação ZionTalk enviada (Denis precisa confirmar visualmente que chegou no WhatsApp dele)
-- [ ] wa.me aberto pro lead
-
-### Observação importante
-Eu consigo confirmar (1) e (3) automaticamente. Para (2), só consigo confirmar que **a ZionTalk respondeu 201/sucesso** — a confirmação visual de que a mensagem chegou no WhatsApp do Denis depende dele olhar o celular. Vou reportar exatamente o que a API retornou.
+Nenhum arquivo novo. 2 arquivos editados. Sem migration, sem mexer em backend.
