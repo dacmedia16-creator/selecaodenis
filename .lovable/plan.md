@@ -1,27 +1,14 @@
 
-Usuário enviou mais 1 peça (7.png) e mensagem vazia. Mesmo padrão das últimas: adicionar ao carousel "Resultados Reais".
+O número `1598178814` parece incompleto. Celulares no Brasil têm 11 dígitos (DDD + 9 + 8 dígitos), e o link `wa.me` exige código do país (55).
 
-**Análise da imagem:**
-- `7.png` → Condomínio **Raízes Campolim**, vendido em **5 dias**, Sorocaba/SP — novo imóvel, recorde absoluto (mais rápido que o Soleil de 10 dias!)
+**Plano:**
+- Editar `src/components/landing/LeadForm.tsx`
+- Trocar a constante `WHATSAPP_NUMBER` de `"5515999999999"` para o número correto no formato internacional (apenas dígitos, sem espaços/traços)
 
-Estado atual (5 cards): Saint Tropez (120d), L'Essence interior (150d), L'Essence varanda, Soleil de Québec (10d), Ibéria (45d).
+**Preciso confirmar o número antes de aplicar**, senão as mensagens vão para o contato errado. Por favor responda com uma das opções:
 
-## Plano
+1. `5515981788140` (55 + DDD 15 + 9 8178-8140) — formato celular padrão
+2. `551598178814` (55 + DDD 15 + 9817-8814) — número fixo/8 dígitos
+3. Outro — me envie o número completo, com DDD e código do país (ex: `5515981788140`)
 
-**1. Adicionar Raízes Campolim** ao array `vendidos`:
-- `vendido-raizes-campolim.png` → "Vendido em 5 dias" / "Campolim, Sorocaba/SP"
-
-**2. Copiar imagem** de `user-uploads://7.png` para `src/assets/vendidos/vendido-raizes-campolim.png`.
-
-**3. Total de 6 cards** no carousel. Embla com `basis-1/2` continua funcionando (mostra 2 por vez no desktop, 1 no mobile, navegação por setas/dots).
-
-**4. Atualizar stats:**
-- "10 dias" → **"5 dias"** (Raízes virou o novo recorde)
-- "5" → **"6"** imóveis em destaque
-- "Sorocaba/SP" — mantém
-
-**Arquivos:**
-- `src/assets/vendidos/vendido-raizes-campolim.png` (novo)
-- `src/components/landing/Vendidos.tsx` (import + array + 2 stats)
-
-Sem backend, sem rotas.
+Assim que confirmar, aplico a alteração.
