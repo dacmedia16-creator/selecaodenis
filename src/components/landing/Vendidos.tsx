@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/carousel";
 import vSaintTropez from "@/assets/vendidos/vendido-saint-tropez.png";
 import vLessence from "@/assets/vendidos/vendido-lessence.png";
+import vLessenceVaranda from "@/assets/vendidos/vendido-lessence-varanda.png";
+import vSoleilQuebec from "@/assets/vendidos/vendido-soleil-quebec.png";
 
 type Vendido = {
   src: string;
@@ -29,6 +31,18 @@ const vendidos: Vendido[] = [
     src: vLessence,
     alt: "L'Essence Campolim vendido por Denis Souza",
     tempo: "Vendido em 150 dias",
+    local: "Campolim, Sorocaba/SP",
+  },
+  {
+    src: vLessenceVaranda,
+    alt: "Apartamento L'Essence Campolim — varanda — vendido por Denis Souza",
+    tempo: "Mais um vendido",
+    local: "Campolim, Sorocaba/SP",
+  },
+  {
+    src: vSoleilQuebec,
+    alt: "Apartamento Soleil de Québec vendido por Denis Souza",
+    tempo: "Vendido em 10 dias",
     local: "Campolim, Sorocaba/SP",
   },
 ];
@@ -111,8 +125,8 @@ export const Vendidos = () => {
 
         <div className="reveal mx-auto mt-14 grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-3">
           {[
-            { icon: Clock, value: "120 dias", label: "tempo médio de venda" },
-            { icon: Home, value: "2", label: "imóveis em destaque" },
+            { icon: Clock, value: "10 dias", label: "tempo recorde de venda" },
+            { icon: Home, value: "4", label: "imóveis em destaque" },
             { icon: MapPin, value: "Sorocaba/SP", label: "região de atuação" },
           ].map(({ icon: Icon, value, label }) => (
             <div
