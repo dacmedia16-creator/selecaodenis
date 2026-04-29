@@ -28,8 +28,7 @@ const conquistas = [
 ];
 
 export const ConquistasPossiveis = () => (
-  <section className="relative overflow-hidden py-20 md:py-28">
-    <div aria-hidden className="absolute inset-0 -z-10 gradient-dark" />
+  <section className="relative isolate overflow-hidden gradient-dark py-20 md:py-28">
     <div
       aria-hidden
       className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_30%,hsl(354_80%_49%/0.25),transparent_55%),radial-gradient(circle_at_80%_70%,hsl(215_100%_45%/0.25),transparent_55%)]"
