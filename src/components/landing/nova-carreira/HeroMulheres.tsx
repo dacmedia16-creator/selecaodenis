@@ -80,7 +80,7 @@ export const HeroMulheres = () => (
             className="absolute inset-0 bg-gradient-to-t from-primary-deep/80 via-primary-deep/10 to-transparent"
           />
 
-          <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-background/90 px-2 py-1 text-[10px] font-semibold text-secondary shadow-soft backdrop-blur">
+          <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-background/90 px-2 py-1 font-semibold text-secondary shadow-soft backdrop-blur text-sm">
             <MapPin className="h-3 w-3" />
             Sorocaba/SP
           </div>
