@@ -4,6 +4,7 @@ import { Story } from "@/components/landing/Story";
 import { ForYou } from "@/components/landing/ForYou";
 import { Benefits } from "@/components/landing/Benefits";
 import { Proof } from "@/components/landing/Proof";
+import { UnicaEscolhaStats } from "@/components/landing/UnicaEscolhaStats";
 import { Vendidos } from "@/components/landing/Vendidos";
 import { WhatYouFind } from "@/components/landing/WhatYouFind";
 import { FormSection } from "@/components/landing/FormSection";
@@ -23,6 +24,7 @@ const Index = () => {
         <ForYou />
         <Benefits />
         <Proof />
+        <UnicaEscolhaStats />
         <Vendidos />
         <WhatYouFind />
         <FormSection />

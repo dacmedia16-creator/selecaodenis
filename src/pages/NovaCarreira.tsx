@@ -7,6 +7,7 @@ import { VoceSeReconhece } from "@/components/landing/nova-carreira/VoceSeReconh
 import { HistoriasReais } from "@/components/landing/nova-carreira/HistoriasReais";
 import { AViradaRemax } from "@/components/landing/nova-carreira/AViradaRemax";
 import { ConquistasPossiveis } from "@/components/landing/nova-carreira/ConquistasPossiveis";
+import { UnicaEscolhaStats } from "@/components/landing/UnicaEscolhaStats";
 import { MitosQueTravam } from "@/components/landing/nova-carreira/MitosQueTravam";
 import { FinalCTA } from "@/components/landing/FinalCTA";
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
@@ -65,6 +66,7 @@ const NovaCarreira = () => {
         <HistoriasReais />
         <AViradaRemax />
         <ConquistasPossiveis />
+        <UnicaEscolhaStats />
         <MitosQueTravam />
         <FormSection />
         <FinalCTA />
