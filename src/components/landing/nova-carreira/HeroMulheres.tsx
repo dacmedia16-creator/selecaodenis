@@ -80,14 +80,14 @@ export const HeroMulheres = () => (
             className="absolute inset-0 bg-gradient-to-t from-primary-deep/80 via-primary-deep/10 to-transparent"
           />
 
-          <div className="absolute left-2 top-2 inline-flex items-center gap-0.5 rounded-full bg-background/90 px-1 py-0.5 text-[6px] font-semibold text-secondary shadow-soft backdrop-blur">
-            <MapPin className="h-1.5 w-1.5" />
+          <div className="absolute left-2 top-2 inline-flex items-center gap-0.5 rounded-full bg-background/90 px-1.5 py-0.5 text-[8px] font-semibold text-secondary shadow-soft backdrop-blur">
+            <MapPin className="h-2 w-2" />
             Sorocaba/SP
           </div>
 
-          <div className="absolute left-2 bottom-2 rounded-lg bg-background/95 px-2 py-1 shadow-elegant backdrop-blur">
-            <div className="font-display text-[9px] font-bold leading-tight text-foreground">Mulheres RE/MAX</div>
-            <div className="text-[7px] leading-tight text-muted-foreground">Mães · alta performance</div>
+          <div className="absolute left-4 bottom-4 rounded-xl bg-background/95 px-3 py-2 shadow-elegant backdrop-blur">
+            <div className="font-display text-xs font-bold leading-tight text-foreground">Mulheres RE/MAX</div>
+            <div className="text-[10px] leading-tight text-muted-foreground">Mães · alta performance</div>
           </div>
         </div>
 
