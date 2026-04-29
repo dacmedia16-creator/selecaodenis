@@ -86,14 +86,9 @@ export const HeroMulheres = () => (
           </div>
 
           <div className="absolute inset-x-4 bottom-4 rounded-2xl bg-background/95 p-4 shadow-elegant backdrop-blur">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <div className="font-display text-base font-bold text-foreground">Mulheres RE/MAX</div>
-                <div className="text-xs text-muted-foreground">Mães, profissionais, alta performance</div>
-              </div>
-              <div className="rounded-lg gradient-red px-3 py-1.5 text-xs font-bold text-white shadow-red-glow">
-                +46 vendas/ano
-              </div>
+            <div>
+              <div className="font-display text-base font-bold text-foreground">Mulheres RE/MAX</div>
+              <div className="text-xs text-muted-foreground">Mães, profissionais, alta performance</div>
             </div>
           </div>
         </div>

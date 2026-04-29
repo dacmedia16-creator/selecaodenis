@@ -1,23 +1,9 @@
 
-# Usar a foto das 4 mulheres no Hero da página `/nova-carreira`
+# Ocultar selo "+46 vendas/ano" no Hero da `/nova-carreira`
 
-A foto enviada (4 mulheres profissionais sorrindo num escritório, com o desenho "Best Mom Ever" e porta-retrato dos filhos na mesa) é perfeita pro tom da página — representa exatamente o público: mães profissionais, equipe diversa, alta performance.
-
-## O que muda
+Remover apenas o badge vermelho "+46 vendas/ano" que aparece no card flutuante sobre a foto das mulheres no Hero. Mantém todo o resto (foto, badge "Sorocaba/SP", título "Mulheres RE/MAX — Mães, profissionais, alta performance", balão flutuante).
 
 **Arquivo:** `src/components/landing/nova-carreira/HeroMulheres.tsx`
+**Mudança:** remover o `<div>` com `gradient-red` e ajustar o card pra não ficar mais com `flex justify-between`.
 
-Substituir o card visual atual (balão grande + stats em fundo gradient) pela **foto real das mulheres**, mantendo a mesma estrutura visual da Hero do Denis (Index) — para consistência:
-
-- Foto em card arredondado com borda e shadow elegante
-- Overlay sutil de gradiente azul no rodapé pra integrar com a marca
-- Badge flutuante no topo-esquerdo: "Sorocaba/SP"
-- Card flutuante na base com: "Mulheres RE/MAX — Mães, profissionais, alta performance" + selo vermelho "+46 vendas/ano"
-- Balão RE/MAX pequeno flutuando no canto superior direito (mantém identidade)
-
-**Asset:** já copiei o arquivo para `src/assets/mulheres-remax.png` — só falta importar e usar.
-
-## Não muda
-
-- Toda a coluna de texto/CTAs do Hero permanece igual
-- Resto da página (depoimentos, mitos, formulário, etc.) intacto
+Os números "+46 vendas" continuam aparecendo na seção **Conquistas Possíveis** mais abaixo na página e nos depoimentos — só sai do card sobre a foto.
