@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Heart, Sparkles, Clock } from "lucide-react";
+import { Heart, Sparkles, Clock, MapPin } from "lucide-react";
 import balao from "@/assets/remax-balao.png";
+import mulheres from "@/assets/mulheres-remax.png";
 
 export const HeroMulheres = () => (
   <section className="relative overflow-hidden pt-28 pb-16 md:pt-36 md:pb-24">
@@ -66,28 +67,44 @@ export const HeroMulheres = () => (
 
       <div className="reveal relative mx-auto w-full max-w-md lg:max-w-none">
         <div aria-hidden className="absolute -inset-6 -z-10 gradient-cta rounded-[2rem] opacity-20 blur-2xl" />
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/40 shadow-elegant gradient-cta p-10">
-          <div className="relative flex flex-col items-center justify-center gap-6 text-center text-white">
-            <img
-              src={balao}
-              alt="Balão RE/MAX"
-              className="h-40 w-40 animate-float object-contain drop-shadow-[0_15px_30px_hsl(0_0%_0%/0.35)] md:h-56 md:w-56"
-            />
-            <div className="space-y-2">
-              <p className="font-display text-2xl font-extrabold md:text-3xl">+46 vendas/ano</p>
-              <p className="text-sm uppercase tracking-widest text-white/80">Resultados de mulheres da equipe</p>
-            </div>
-            <div className="grid w-full grid-cols-2 gap-3 pt-4">
-              <div className="rounded-xl bg-white/10 p-4 backdrop-blur">
-                <p className="font-display text-xl font-bold">Clube</p>
-                <p className="text-xs text-white/80">do Milhão</p>
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/40 shadow-elegant">
+          <img
+            src={mulheres}
+            alt="Equipe de mulheres corretoras de imóveis na RE/MAX Única Escolha"
+            width={1456}
+            height={1088}
+            className="aspect-[4/3] w-full object-cover"
+          />
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-gradient-to-t from-primary-deep/80 via-primary-deep/10 to-transparent"
+          />
+
+          <div className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-background/90 px-3 py-1.5 text-xs font-semibold text-secondary shadow-soft backdrop-blur">
+            <MapPin className="h-3.5 w-3.5" />
+            Sorocaba/SP
+          </div>
+
+          <div className="absolute inset-x-4 bottom-4 rounded-2xl bg-background/95 p-4 shadow-elegant backdrop-blur">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <div className="font-display text-base font-bold text-foreground">Mulheres RE/MAX</div>
+                <div className="text-xs text-muted-foreground">Mães, profissionais, alta performance</div>
               </div>
-              <div className="rounded-xl bg-white/10 p-4 backdrop-blur">
-                <p className="font-display text-xl font-bold">Liberdade</p>
-                <p className="text-xs text-white/80">de horários</p>
+              <div className="rounded-lg gradient-red px-3 py-1.5 text-xs font-bold text-white shadow-red-glow">
+                +46 vendas/ano
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="absolute -right-4 -top-6 h-20 w-20 animate-float md:-right-6 md:-top-8 md:h-28 md:w-28">
+          <div aria-hidden className="absolute inset-2 rounded-full bg-secondary/30 blur-2xl" />
+          <img
+            src={balao}
+            alt="Balão RE/MAX"
+            className="relative h-full w-full object-contain drop-shadow-[0_10px_25px_hsl(354_80%_49%/0.35)]"
+          />
         </div>
       </div>
     </div>
