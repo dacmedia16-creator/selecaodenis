@@ -85,11 +85,9 @@ export const HeroMulheres = () => (
             Sorocaba/SP
           </div>
 
-          <div className="absolute inset-x-4 bottom-4 rounded-2xl bg-background/95 p-4 shadow-elegant backdrop-blur">
-            <div>
-              <div className="font-display text-base font-bold text-foreground">Mulheres RE/MAX</div>
-              <div className="text-xs text-muted-foreground">Mães, profissionais, alta performance</div>
-            </div>
+          <div className="absolute left-4 bottom-4 rounded-xl bg-background/95 px-3 py-2 shadow-elegant backdrop-blur">
+            <div className="font-display text-xs font-bold leading-tight text-foreground">Mulheres RE/MAX</div>
+            <div className="text-[10px] leading-tight text-muted-foreground">Mães · alta performance</div>
           </div>
         </div>
 
