@@ -1,20 +1,18 @@
+# Diminuir badge "Sorocaba/SP"
 
-# Corrigir fundo escuro invisível em "Conquistas Possíveis"
+O badge no canto superior esquerdo da imagem do Hero (página `/nova-carreira`) ainda está cobrindo parte do rosto da mulher. Vou reduzir o tamanho geral mais uma vez.
 
-O espaço vazio no print é a seção **"Conquistas Possíveis"** da `/nova-carreira`. O texto branco e os ícones brancos somem porque o fundo `gradient-dark` está sendo aplicado num `<div absolute -z-10>` que, em alguns contextos de empilhamento, fica atrás do `bg-background` da página inteira. Resultado: fundo branco + texto branco = espaço vazio.
+## Mudança
 
-## Correção
+**Arquivo:** `src/components/landing/nova-carreira/HeroMulheres.tsx` (linhas 83-86)
 
-**Arquivo:** `src/components/landing/nova-carreira/ConquistasPossiveis.tsx`
+- Texto: `text-[6px]` → `text-[5px]`
+- Padding vertical: `py-0.5` → `py-[1px]`
+- Padding horizontal: mantém `px-1`
+- Ícone MapPin: `h-1.5 w-1.5` → `h-1 w-1`
 
-Mover a classe `gradient-dark` direto pra `<section>` (em vez do div absoluto) e adicionar `isolate` pra garantir contexto de empilhamento próprio.
+Resultado: badge ainda menor e mais discreto, deixando o rosto da mulher mais visível por trás.
 
-```tsx
-<section className="relative isolate overflow-hidden gradient-dark py-20 md:py-28">
-  {/* remove o div com gradient-dark */}
-  <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(...)]" />
-  ...
-</section>
-```
+## Dica
 
-Vou aplicar a mesma garantia (`isolate`) no `UnicaEscolhaStats` também, já que ele usa o mesmo padrão e pode ter o mesmo bug.
+Para ajustes finos como esse, o **Visual Edits** (botão no canto inferior esquerdo do chat) é mais rápido e não consome créditos para mudanças de texto/cor/fonte.
