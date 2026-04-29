@@ -1,27 +1,20 @@
 
-# Adicionar bloco "Resultados RE/MAX Única Escolha" nas duas páginas
+# Corrigir fundo escuro invisível em "Conquistas Possíveis"
 
-Criar uma seção visual com os 4 números da unidade e exibir tanto na home (`/`) quanto na página `/nova-carreira`.
+O espaço vazio no print é a seção **"Conquistas Possíveis"** da `/nova-carreira`. O texto branco e os ícones brancos somem porque o fundo `gradient-dark` está sendo aplicado num `<div absolute -z-10>` que, em alguns contextos de empilhamento, fica atrás do `bg-background` da página inteira. Resultado: fundo branco + texto branco = espaço vazio.
 
-## Números exibidos
+## Correção
 
-- **1.500** transações no ano passado
-- **R$ 140 MI** — VGV (Valor Geral de Vendas)
-- **51–71%** crescimento no trimestre
-- **120%** projeção de crescimento em 2026
+**Arquivo:** `src/components/landing/nova-carreira/ConquistasPossiveis.tsx`
 
-## Componente novo
+Mover a classe `gradient-dark` direto pra `<section>` (em vez do div absoluto) e adicionar `isolate` pra garantir contexto de empilhamento próprio.
 
-**Arquivo:** `src/components/landing/UnicaEscolhaStats.tsx`
+```tsx
+<section className="relative isolate overflow-hidden gradient-dark py-20 md:py-28">
+  {/* remove o div com gradient-dark */}
+  <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(...)]" />
+  ...
+</section>
+```
 
-- Seção full-width com fundo escuro (`gradient-dark`) e blobs azul + vermelho — segue o padrão visual da seção `Proof` da home
-- Título: "Você entra em uma **unidade em pleno crescimento**"
-- Grid de 4 cards translúcidos (1 col mobile / 2 tablet / 4 desktop), cada um com ícone (Building2, TrendingUp, LineChart, Rocket) + número grande + label
-- Animação `useCountUp` reaproveitada para os números (1500, 140, 120). O range "51–71%" fica fixo
-- Rodapé pequeno: "Resultados consolidados da RE/MAX Única Escolha — Sorocaba/SP"
-
-## Integração
-
-**`src/pages/Index.tsx`** — inserir `<UnicaEscolhaStats />` **entre `<Proof />` e `<Vendidos />`** (encadeia naturalmente: prova individual do Denis → prova da unidade → imóveis vendidos).
-
-**`src/pages/NovaCarreira.tsx`** — inserir `<UnicaEscolhaStats />` **entre `<ConquistasPossiveis />` e `<MitosQueTravam />`** (mostra que o ambiente onde elas vão entrar está crescendo forte, antes de derrubar objeções).
+Vou aplicar a mesma garantia (`isolate`) no `UnicaEscolhaStats` também, já que ele usa o mesmo padrão e pode ter o mesmo bug.
