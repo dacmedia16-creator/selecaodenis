@@ -66,6 +66,7 @@ const NovaCarreira = () => {
         <HistoriasReais />
         <AViradaRemax />
         <ConquistasPossiveis />
+        <UnicaEscolhaStats />
         <MitosQueTravam />
         <FormSection />
         <FinalCTA />
