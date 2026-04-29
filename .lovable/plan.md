@@ -1,9 +1,15 @@
 
-# Ocultar selo "+46 vendas/ano" no Hero da `/nova-carreira`
+# Diminuir badge "Sorocaba/SP" no Hero da `/nova-carreira`
 
-Remover apenas o badge vermelho "+46 vendas/ano" que aparece no card flutuante sobre a foto das mulheres no Hero. Mantém todo o resto (foto, badge "Sorocaba/SP", título "Mulheres RE/MAX — Mães, profissionais, alta performance", balão flutuante).
+Reduzir o tamanho do badge no canto superior esquerdo da foto das mulheres.
 
 **Arquivo:** `src/components/landing/nova-carreira/HeroMulheres.tsx`
-**Mudança:** remover o `<div>` com `gradient-red` e ajustar o card pra não ficar mais com `flex justify-between`.
 
-Os números "+46 vendas" continuam aparecendo na seção **Conquistas Possíveis** mais abaixo na página e nos depoimentos — só sai do card sobre a foto.
+**Mudanças no badge:**
+- Padding: `px-3 py-1.5` → `px-2 py-1`
+- Posição: `left-4 top-4` → `left-3 top-3`
+- Fonte: `text-xs` → `text-[10px]`
+- Ícone: `h-3.5 w-3.5` → `h-3 w-3`
+- Gap: `gap-1.5` → `gap-1`
+
+Resultado: badge bem mais compacto e discreto sobre a foto.
