@@ -1,15 +1,15 @@
 ## Objetivo
-Usar a imagem enviada (mãe com filhos + RE/MAX) na landing `/nova-carreira`, substituindo a foto atual do Hero.
+Trocar a imagem de preview que aparece quando o link `recrutamax.com.br` é compartilhado no WhatsApp/redes sociais (Open Graph image).
 
-## Passos
-1. Copiar `user-uploads://ChatGPT_Image_7_de_mai._de_2026_16_13_19.png` para `src/assets/recomeco-mae-filhos.png`.
-2. Em `src/components/landing/nova-carreira/HeroMulheres.tsx`:
-   - Trocar o import `mulheres-remax.png` pela nova imagem.
-   - Atualizar o `alt` para "Mãe e filhos — recomeço de carreira na RE/MAX".
-   - Como a nova imagem já contém o balão RE/MAX, remover o `<img>` flutuante do balão para não duplicar.
-   - Ajustar o aspect ratio do container (a imagem é vertical ~4/5) trocando `aspect-[4/3]` por `aspect-[4/5]` e `object-cover` mantido.
+## O que fazer
+1. Copiar a nova imagem (mãe com filhos + RE/MAX) para `public/og-image.png` para que fique acessível em `https://recrutamax.com.br/og-image.png`.
+2. Em `index.html`, atualizar as duas meta tags:
+   - `<meta property="og:image" ...>`
+   - `<meta name="twitter:image" ...>`
+   apontando para `https://recrutamax.com.br/og-image.png`.
+3. Atualizar também o `og:title`, `twitter:title`, `og:description`, `twitter:description` e `<title>` para refletir a nova landing (foco em mães/recomeço de carreira), já que `/nova-carreira` agora é a home:
+   - Título: "RE/MAX — Seu recomeço de carreira pode começar agora"
+   - Descrição: "Uma nova carreira para mães que querem voltar a crescer, gerar renda e ter mais liberdade. Conheça a oportunidade RE/MAX em Sorocaba/SP."
 
-Sem mudanças em outras páginas.
-
-## Pergunta
-Confirma que a imagem deve substituir a foto do Hero da página `/nova-carreira` (e não ser adicionada em outra seção)?
+## Observação importante
+O cache do WhatsApp guarda a imagem antiga por dias. Após publicar, será necessário forçar a atualização usando o [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/) colando a URL e clicando em "Scrape Again".
