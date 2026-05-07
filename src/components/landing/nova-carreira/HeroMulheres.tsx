@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Heart, Sparkles, Clock, MapPin } from "lucide-react";
-import balao from "@/assets/remax-balao.png";
-import mulheres from "@/assets/mulheres-remax.png";
+import mulheres from "@/assets/recomeco-mae-filhos.png";
 
 export const HeroMulheres = () => (
   <section className="relative overflow-hidden pt-28 pb-16 md:pt-36 md:pb-24">
@@ -70,10 +69,8 @@ export const HeroMulheres = () => (
         <div className="relative overflow-hidden rounded-[2rem] border border-white/40 shadow-elegant">
           <img
             src={mulheres}
-            alt="Equipe de mulheres corretoras de imóveis na RE/MAX Única Escolha"
-            width={1456}
-            height={1088}
-            className="aspect-[4/3] w-full object-cover"
+            alt="Mãe e filhos — recomeço de carreira na RE/MAX"
+            className="aspect-[4/5] w-full object-cover"
           />
           <div
             aria-hidden
@@ -91,14 +88,6 @@ export const HeroMulheres = () => (
           </div>
         </div>
 
-        <div className="absolute -right-4 -top-6 h-20 w-20 animate-float md:-right-6 md:-top-8 md:h-28 md:w-28">
-          <div aria-hidden className="absolute inset-2 rounded-full bg-secondary/30 blur-2xl" />
-          <img
-            src={balao}
-            alt="Balão RE/MAX"
-            className="relative h-full w-full object-contain drop-shadow-[0_10px_25px_hsl(354_80%_49%/0.35)]"
-          />
-        </div>
       </div>
     </div>
   </section>
