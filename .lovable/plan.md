@@ -1,18 +1,22 @@
-# Diminuir badge "Sorocaba/SP"
+## Objetivo
+Fazer com que a página `/nova-carreira` seja exibida na rota raiz `/` do site.
 
-O badge no canto superior esquerdo da imagem do Hero (página `/nova-carreira`) ainda está cobrindo parte do rosto da mulher. Vou reduzir o tamanho geral mais uma vez.
+## Mudanças
 
-## Mudança
+**Arquivo:** `src/App.tsx`
 
-**Arquivo:** `src/components/landing/nova-carreira/HeroMulheres.tsx` (linhas 83-86)
+- A rota `/` passará a renderizar o componente `NovaCarreira` (atualmente renderiza `Index`).
+- A rota `/nova-carreira` continuará funcionando e também renderizará `NovaCarreira`, para não quebrar links existentes.
+- A página antiga `Index` ficará acessível em `/antiga` (preservada para referência; podemos remover depois se você quiser).
 
-- Texto: `text-[6px]` → `text-[5px]`
-- Padding vertical: `py-0.5` → `py-[1px]`
-- Padding horizontal: mantém `px-1`
-- Ícone MapPin: `h-1.5 w-1.5` → `h-1 w-1`
+```tsx
+<Route path="/" element={<NovaCarreira />} />
+<Route path="/nova-carreira" element={<NovaCarreira />} />
+<Route path="/antiga" element={<Index />} />
+```
 
-Resultado: badge ainda menor e mais discreto, deixando o rosto da mulher mais visível por trás.
+## Observações
+- Nenhum componente precisa ser modificado, apenas o roteamento.
+- SEO (title/description/canonical) já é configurado dinamicamente dentro de `NovaCarreira.tsx` via `useEffect`, então funcionará normalmente na raiz.
 
-## Dica
-
-Para ajustes finos como esse, o **Visual Edits** (botão no canto inferior esquerdo do chat) é mais rápido e não consome créditos para mudanças de texto/cor/fonte.
+Me confirme se quer manter a página antiga acessível em `/antiga` ou removê-la totalmente.
