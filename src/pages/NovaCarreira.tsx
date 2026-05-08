@@ -65,14 +65,14 @@ const NovaCarreira = () => {
         <HeroMulheres />
         <VoceSeReconhece />
         <HistoriasReais />
-        <InlineCTA headline="Quer viver uma história assim?" buttonText="Quero viver uma história assim" />
+        <InlineCTA source="inline_historias" headline="Quer viver uma história assim?" buttonText="Quero viver uma história assim" />
         <AViradaRemax />
-        <InlineCTA headline="Pronta para sua virada de chave?" buttonText="Quero saber como começar" />
+        <InlineCTA source="inline_virada" headline="Pronta para sua virada de chave?" buttonText="Quero saber como começar" />
         <ConquistasPossiveis />
-        <InlineCTA headline="Imagine essas conquistas na sua vida." buttonText="Quero essa oportunidade" />
+        <InlineCTA source="inline_conquistas" headline="Imagine essas conquistas na sua vida." buttonText="Quero essa oportunidade" />
         <UnicaEscolhaStats />
         <MitosQueTravam />
-        <InlineCTA headline="Sem mais desculpas — bora começar?" buttonText="Estou pronta para começar" />
+        <InlineCTA source="inline_mitos" headline="Sem mais desculpas — bora começar?" buttonText="Estou pronta para começar" />
         <FormSection />
         <FinalCTA />
       </main>

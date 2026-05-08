@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Heart, Sparkles, Clock, MapPin } from "lucide-react";
 import mulheres from "@/assets/recomeco-mae-filhos.png";
+import { trackCtaClick } from "@/lib/tracking";
 
 export const HeroMulheres = () => (
   <section className="relative overflow-hidden pt-28 pb-16 md:pt-36 md:pb-24">
@@ -28,7 +29,7 @@ export const HeroMulheres = () => (
         </p>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <a href="#formulario">
+          <a href="#formulario" onClick={() => trackCtaClick("hero")}>
             <Button
               size="lg"
               className="h-14 w-full gradient-cta border-0 px-8 text-base font-semibold text-white shadow-elegant hover:opacity-95 sm:w-auto"

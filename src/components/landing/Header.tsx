@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { RemaxLogo } from "@/components/RemaxLogo";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { trackCtaClick } from "@/lib/tracking";
 
 export const Header = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -29,7 +30,7 @@ export const Header = () => {
             <span className="text-xs text-muted-foreground">Sorocaba/SP</span>
           </div>
         </div>
-        <a href="#formulario">
+        <a href="#formulario" onClick={() => trackCtaClick("header")}>
           <Button size="sm" className="gradient-cta border-0 font-semibold text-white shadow-elegant hover:opacity-95">
             Quero saber mais
           </Button>

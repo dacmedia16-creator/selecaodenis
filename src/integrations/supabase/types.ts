@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      cta_clicks: {
+        Row: {
+          created_at: string
+          id: string
+          path: string | null
+          session_id: string | null
+          source: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          path?: string | null
+          session_id?: string | null
+          source: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          path?: string | null
+          session_id?: string | null
+          source?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           attraction: string | null
@@ -22,6 +49,7 @@ export type Database = {
           email: string
           id: string
           is_agent: boolean
+          last_cta_source: string | null
           name: string
           whatsapp: string
         }
@@ -32,6 +60,7 @@ export type Database = {
           email: string
           id?: string
           is_agent: boolean
+          last_cta_source?: string | null
           name: string
           whatsapp: string
         }
@@ -42,6 +71,7 @@ export type Database = {
           email?: string
           id?: string
           is_agent?: boolean
+          last_cta_source?: string | null
           name?: string
           whatsapp?: string
         }

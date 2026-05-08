@@ -63,12 +63,24 @@ interface Lead {
   is_agent: boolean;
   attraction: string | null;
   created_at: string;
+  last_cta_source: string | null;
 }
+
+const CTA_LABELS: Record<string, string> = {
+  header: "Header (topo)",
+  hero: "Hero principal",
+  inline_historias: "CTA após Histórias",
+  inline_virada: "CTA após A Virada",
+  inline_conquistas: "CTA após Conquistas",
+  inline_mitos: "CTA após Mitos",
+  final_cta: "CTA final",
+};
 
 const Admin = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [ctaClicks, setCtaClicks] = useState<{ source: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("");
@@ -83,15 +95,20 @@ const Admin = () => {
 
   const fetchLeads = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("leads")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (error) {
-      console.error("fetch leads:", error);
+    const [leadsRes, clicksRes] = await Promise.all([
+      supabase.from("leads").select("*").order("created_at", { ascending: false }),
+      supabase.from("cta_clicks").select("source"),
+    ]);
+    if (leadsRes.error) {
+      console.error("fetch leads:", leadsRes.error);
       toast.error("Erro ao carregar leads.");
     } else {
-      setLeads(data ?? []);
+      setLeads((leadsRes.data ?? []) as Lead[]);
+    }
+    if (clicksRes.error) {
+      console.error("fetch cta_clicks:", clicksRes.error);
+    } else {
+      setCtaClicks(clicksRes.data ?? []);
     }
     setLoading(false);
   };
@@ -99,6 +116,28 @@ const Admin = () => {
   useEffect(() => {
     fetchLeads();
   }, []);
+
+  const ctaPerformance = useMemo(() => {
+    const clickCounts: Record<string, number> = {};
+    ctaClicks.forEach((c) => {
+      clickCounts[c.source] = (clickCounts[c.source] ?? 0) + 1;
+    });
+    const leadCounts: Record<string, number> = {};
+    leads.forEach((l) => {
+      if (l.last_cta_source) {
+        leadCounts[l.last_cta_source] = (leadCounts[l.last_cta_source] ?? 0) + 1;
+      }
+    });
+    const sources = new Set([...Object.keys(clickCounts), ...Object.keys(leadCounts)]);
+    return Array.from(sources)
+      .map((source) => {
+        const clicks = clickCounts[source] ?? 0;
+        const leadsCount = leadCounts[source] ?? 0;
+        const conversion = clicks > 0 ? (leadsCount / clicks) * 100 : 0;
+        return { source, clicks, leads: leadsCount, conversion };
+      })
+      .sort((a, b) => b.leads - a.leads || b.clicks - a.clicks);
+  }, [ctaClicks, leads]);
 
   const filtered = useMemo(() => {
     return leads.filter((l) => {
@@ -216,6 +255,56 @@ const Admin = () => {
             fullLabel="Já corretores"
             value={leads.filter((l) => l.is_agent).length}
           />
+        </div>
+
+        {/* CTA performance */}
+        <div className="rounded-2xl border border-border bg-card p-3 md:p-6">
+          <div className="mb-3 flex items-center justify-between md:mb-4">
+            <h2 className="font-display text-base font-bold text-foreground md:text-lg">
+              Performance dos CTAs
+            </h2>
+            <span className="text-xs text-muted-foreground">
+              {ctaClicks.length} clique{ctaClicks.length === 1 ? "" : "s"} totais
+            </span>
+          </div>
+          {ctaPerformance.length === 0 ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">
+              Sem cliques registrados ainda.
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>CTA</TableHead>
+                    <TableHead className="text-right">Cliques</TableHead>
+                    <TableHead className="text-right">Leads</TableHead>
+                    <TableHead className="text-right">Conversão</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {ctaPerformance.map((row) => (
+                    <TableRow key={row.source}>
+                      <TableCell className="font-medium">
+                        {CTA_LABELS[row.source] ?? row.source}
+                      </TableCell>
+                      <TableCell className="text-right">{row.clicks}</TableCell>
+                      <TableCell className="text-right">
+                        {row.leads > 0 ? (
+                          <Badge variant="default">{row.leads}</Badge>
+                        ) : (
+                          <span className="text-muted-foreground">0</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right text-muted-foreground">
+                        {row.clicks > 0 ? `${row.conversion.toFixed(1)}%` : "—"}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </div>
 
         {/* Search + filters */}
