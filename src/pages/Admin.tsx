@@ -80,6 +80,7 @@ const Admin = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [ctaClicks, setCtaClicks] = useState<{ source: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("");
@@ -94,15 +95,20 @@ const Admin = () => {
 
   const fetchLeads = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("leads")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (error) {
-      console.error("fetch leads:", error);
+    const [leadsRes, clicksRes] = await Promise.all([
+      supabase.from("leads").select("*").order("created_at", { ascending: false }),
+      supabase.from("cta_clicks").select("source"),
+    ]);
+    if (leadsRes.error) {
+      console.error("fetch leads:", leadsRes.error);
       toast.error("Erro ao carregar leads.");
     } else {
-      setLeads(data ?? []);
+      setLeads((leadsRes.data ?? []) as Lead[]);
+    }
+    if (clicksRes.error) {
+      console.error("fetch cta_clicks:", clicksRes.error);
+    } else {
+      setCtaClicks(clicksRes.data ?? []);
     }
     setLoading(false);
   };
@@ -110,6 +116,28 @@ const Admin = () => {
   useEffect(() => {
     fetchLeads();
   }, []);
+
+  const ctaPerformance = useMemo(() => {
+    const clickCounts: Record<string, number> = {};
+    ctaClicks.forEach((c) => {
+      clickCounts[c.source] = (clickCounts[c.source] ?? 0) + 1;
+    });
+    const leadCounts: Record<string, number> = {};
+    leads.forEach((l) => {
+      if (l.last_cta_source) {
+        leadCounts[l.last_cta_source] = (leadCounts[l.last_cta_source] ?? 0) + 1;
+      }
+    });
+    const sources = new Set([...Object.keys(clickCounts), ...Object.keys(leadCounts)]);
+    return Array.from(sources)
+      .map((source) => {
+        const clicks = clickCounts[source] ?? 0;
+        const leadsCount = leadCounts[source] ?? 0;
+        const conversion = clicks > 0 ? (leadsCount / clicks) * 100 : 0;
+        return { source, clicks, leads: leadsCount, conversion };
+      })
+      .sort((a, b) => b.leads - a.leads || b.clicks - a.clicks);
+  }, [ctaClicks, leads]);
 
   const filtered = useMemo(() => {
     return leads.filter((l) => {
