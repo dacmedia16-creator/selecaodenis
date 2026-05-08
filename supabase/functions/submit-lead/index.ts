@@ -9,6 +9,7 @@ const LeadSchema = z.object({
   city: z.string().trim().min(2).max(80),
   isAgent: z.enum(["sim", "nao"]),
   attraction: z.string().trim().max(500).optional().or(z.literal("")),
+  lastCtaSource: z.string().trim().max(50).optional(),
 });
 
 const ZIONTALK_URL = "https://app.ziontalk.com/api/send_message/";
@@ -42,6 +43,7 @@ Deno.serve(async (req) => {
       city: lead.city,
       is_agent: lead.isAgent === "sim",
       attraction: lead.attraction || null,
+      last_cta_source: lead.lastCtaSource || null,
     });
 
     if (dbError) {

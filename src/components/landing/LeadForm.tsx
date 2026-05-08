@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { CheckCircle2, Loader2, Send, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { getLastCtaSource } from "@/lib/tracking";
 
 const leadSchema = z.object({
   name: z.string().trim().min(2, "Informe seu nome").max(100),
@@ -64,7 +65,7 @@ export const LeadForm = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke("submit-lead", {
-        body: parsed.data,
+        body: { ...parsed.data, lastCtaSource: getLastCtaSource() ?? undefined },
       });
 
       if (error || !data?.success) {
