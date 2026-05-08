@@ -1,15 +1,26 @@
 ## Objetivo
-Trocar a imagem de preview que aparece quando o link `recrutamax.com.br` é compartilhado no WhatsApp/redes sociais (Open Graph image).
+Adicionar mais CTAs ("Quero saber como" → âncora `#formulario`) ao longo da landing `/` para que o visitante encontre um botão de ação a qualquer ponto da rolagem. Hoje só existem CTAs no Header, Hero e FinalCTA — entre eles há ~7 seções sem nenhum botão.
 
-## O que fazer
-1. Copiar a nova imagem (mãe com filhos + RE/MAX) para `public/og-image.png` para que fique acessível em `https://recrutamax.com.br/og-image.png`.
-2. Em `index.html`, atualizar as duas meta tags:
-   - `<meta property="og:image" ...>`
-   - `<meta name="twitter:image" ...>`
-   apontando para `https://recrutamax.com.br/og-image.png`.
-3. Atualizar também o `og:title`, `twitter:title`, `og:description`, `twitter:description` e `<title>` para refletir a nova landing (foco em mães/recomeço de carreira), já que `/nova-carreira` agora é a home:
-   - Título: "RE/MAX — Seu recomeço de carreira pode começar agora"
-   - Descrição: "Uma nova carreira para mães que querem voltar a crescer, gerar renda e ter mais liberdade. Conheça a oportunidade RE/MAX em Sorocaba/SP."
+## Onde adicionar
+Inserir um CTA curto e centralizado ao final das seções de maior peso emocional/persuasivo:
 
-## Observação importante
-O cache do WhatsApp guarda a imagem antiga por dias. Após publicar, será necessário forçar a atualização usando o [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/) colando a URL e clicando em "Scrape Again".
+1. **Após `HistoriasReais`** — momento de identificação após ler depoimentos reais.
+   - Texto: "Quero viver uma história assim"
+2. **Após `AViradaRemax`** — depois de entender a virada de chave da RE/MAX.
+   - Texto: "Quero saber como começar"
+3. **Após `ConquistasPossiveis`** — depois de visualizar o que é possível conquistar.
+   - Texto: "Quero essa oportunidade"
+4. **Após `MitosQueTravam`** — fechando objeções, antes do formulário.
+   - Texto: "Estou pronta para começar"
+
+## Como fazer (técnico)
+- Criar um componente reutilizável `src/components/landing/nova-carreira/InlineCTA.tsx` que renderiza uma faixa enxuta (frase curta + botão) apontando para `#formulario`.
+- Props: `headline` e `buttonText` (ambos opcionais com defaults).
+- Usar tokens do design system (cores semânticas, sem cores hardcoded), mesmo estilo de botão já usado em `HeroMulheres` / `FinalCTA` para manter consistência visual.
+- Incluir animação de reveal (mesmo padrão `useRevealOnScroll` já presente).
+- Em `src/pages/NovaCarreira.tsx`, intercalar `<InlineCTA ... />` entre as seções listadas acima.
+
+## Fora de escopo
+- Não alterar conteúdo das seções existentes.
+- Não mudar o formulário, Header ou FinalCTA.
+- Não criar novas páginas/rotas.
