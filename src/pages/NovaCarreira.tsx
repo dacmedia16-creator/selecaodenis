@@ -9,6 +9,7 @@ import { AViradaRemax } from "@/components/landing/nova-carreira/AViradaRemax";
 import { ConquistasPossiveis } from "@/components/landing/nova-carreira/ConquistasPossiveis";
 import { UnicaEscolhaStats } from "@/components/landing/UnicaEscolhaStats";
 import { MitosQueTravam } from "@/components/landing/nova-carreira/MitosQueTravam";
+import { InlineCTA } from "@/components/landing/nova-carreira/InlineCTA";
 import { FinalCTA } from "@/components/landing/FinalCTA";
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 
@@ -64,10 +65,14 @@ const NovaCarreira = () => {
         <HeroMulheres />
         <VoceSeReconhece />
         <HistoriasReais />
+        <InlineCTA headline="Quer viver uma história assim?" buttonText="Quero viver uma história assim" />
         <AViradaRemax />
+        <InlineCTA headline="Pronta para sua virada de chave?" buttonText="Quero saber como começar" />
         <ConquistasPossiveis />
+        <InlineCTA headline="Imagine essas conquistas na sua vida." buttonText="Quero essa oportunidade" />
         <UnicaEscolhaStats />
         <MitosQueTravam />
+        <InlineCTA headline="Sem mais desculpas — bora começar?" buttonText="Estou pronta para começar" />
         <FormSection />
         <FinalCTA />
       </main>
