@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Heart, Sparkles, Clock, MapPin } from "lucide-react";
 import mulheres from "@/assets/recomeco-mae-filhos.png";
+import { trackCtaClick } from "@/lib/tracking";
 
 export const HeroMulheres = () => (
   <section className="relative overflow-hidden pt-28 pb-16 md:pt-36 md:pb-24">

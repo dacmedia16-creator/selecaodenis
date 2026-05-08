@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { RemaxLogo } from "@/components/RemaxLogo";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { trackCtaClick } from "@/lib/tracking";
 
 export const Header = () => {
   const [scrolled, setScrolled] = useState(false);
