@@ -28,7 +28,7 @@ export const HeroMulheres = () => (
         </p>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <a href="#formulario">
+          <a href="#formulario" onClick={() => trackCtaClick("hero")}>
             <Button
               size="lg"
               className="h-14 w-full gradient-cta border-0 px-8 text-base font-semibold text-white shadow-elegant hover:opacity-95 sm:w-auto"

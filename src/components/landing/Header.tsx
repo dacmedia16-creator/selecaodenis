@@ -29,7 +29,7 @@ export const Header = () => {
             <span className="text-xs text-muted-foreground">Sorocaba/SP</span>
           </div>
         </div>
-        <a href="#formulario">
+        <a href="#formulario" onClick={() => trackCtaClick("header")}>
           <Button size="sm" className="gradient-cta border-0 font-semibold text-white shadow-elegant hover:opacity-95">
             Quero saber mais
           </Button>

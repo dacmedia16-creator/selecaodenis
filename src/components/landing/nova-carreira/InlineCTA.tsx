@@ -1,12 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { trackCtaClick, type CtaSource } from "@/lib/tracking";
 
 interface InlineCTAProps {
+  source: CtaSource;
   headline?: string;
   buttonText?: string;
 }
 
 export const InlineCTA = ({
+  source,
   headline = "Pronta para dar o próximo passo?",
   buttonText = "Quero saber como",
 }: InlineCTAProps) => (
@@ -16,7 +19,7 @@ export const InlineCTA = ({
         <p className="font-display text-xl font-bold leading-snug text-foreground md:text-2xl">
           {headline}
         </p>
-        <a href="#formulario" className="shrink-0">
+        <a href="#formulario" className="shrink-0" onClick={() => trackCtaClick(source)}>
           <Button
             size="lg"
             className="h-12 gradient-cta border-0 px-6 text-base font-semibold text-white shadow-elegant hover:opacity-95"

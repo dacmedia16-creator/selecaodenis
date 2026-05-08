@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { trackCtaClick } from "@/lib/tracking";
 
 export const FinalCTA = () => (
   <section className="relative overflow-hidden py-20 md:py-28">
@@ -25,7 +26,7 @@ export const FinalCTA = () => (
         </p>
 
         <div className="mt-10 flex justify-center">
-          <a href="#formulario">
+          <a href="#formulario" onClick={() => trackCtaClick("final_cta")}>
             <Button
               size="lg"
               className="h-14 bg-white px-8 text-base font-bold text-primary shadow-elegant hover:bg-white/95"
