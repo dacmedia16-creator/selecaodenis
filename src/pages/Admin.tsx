@@ -63,7 +63,18 @@ interface Lead {
   is_agent: boolean;
   attraction: string | null;
   created_at: string;
+  last_cta_source: string | null;
 }
+
+const CTA_LABELS: Record<string, string> = {
+  header: "Header (topo)",
+  hero: "Hero principal",
+  inline_historias: "CTA após Histórias",
+  inline_virada: "CTA após A Virada",
+  inline_conquistas: "CTA após Conquistas",
+  inline_mitos: "CTA após Mitos",
+  final_cta: "CTA final",
+};
 
 const Admin = () => {
   const navigate = useNavigate();
