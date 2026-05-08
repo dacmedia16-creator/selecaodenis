@@ -257,6 +257,56 @@ const Admin = () => {
           />
         </div>
 
+        {/* CTA performance */}
+        <div className="rounded-2xl border border-border bg-card p-3 md:p-6">
+          <div className="mb-3 flex items-center justify-between md:mb-4">
+            <h2 className="font-display text-base font-bold text-foreground md:text-lg">
+              Performance dos CTAs
+            </h2>
+            <span className="text-xs text-muted-foreground">
+              {ctaClicks.length} clique{ctaClicks.length === 1 ? "" : "s"} totais
+            </span>
+          </div>
+          {ctaPerformance.length === 0 ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">
+              Sem cliques registrados ainda.
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>CTA</TableHead>
+                    <TableHead className="text-right">Cliques</TableHead>
+                    <TableHead className="text-right">Leads</TableHead>
+                    <TableHead className="text-right">Conversão</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {ctaPerformance.map((row) => (
+                    <TableRow key={row.source}>
+                      <TableCell className="font-medium">
+                        {CTA_LABELS[row.source] ?? row.source}
+                      </TableCell>
+                      <TableCell className="text-right">{row.clicks}</TableCell>
+                      <TableCell className="text-right">
+                        {row.leads > 0 ? (
+                          <Badge variant="default">{row.leads}</Badge>
+                        ) : (
+                          <span className="text-muted-foreground">0</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right text-muted-foreground">
+                        {row.clicks > 0 ? `${row.conversion.toFixed(1)}%` : "—"}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </div>
+
         {/* Search + filters */}
         <div className="rounded-2xl border border-border bg-card p-3 md:p-6">
           <div className="space-y-3">
