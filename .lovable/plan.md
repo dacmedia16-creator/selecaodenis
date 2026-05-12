@@ -1,11 +1,12 @@
-## Ocultar Formulário (mantendo âncora)
+## Corrigir destino dos CTAs com formulário oculto
 
-### Objetivo
-Esconder visualmente a seção do formulário na página `/nova-carreira`, mas manter a âncora `#formulario` no DOM para que todos os CTAs continuem rolando até o mesmo ponto da página (sem alterar comportamento dos botões).
+### Problema
+O wrapper `hidden` (display:none) remove o `FormSection` do layout, então os links `#formulario` rolam até o próximo elemento visível (`FinalCTA`).
 
-### Alteração
+### Solução
+Substituir o wrapper `hidden` por uma **seção placeholder vazia** com `id="formulario"` que ocupa espaço vertical equivalente, fazendo os CTAs rolarem para o "lugar" do formulário antigo.
 
-Em `src/pages/NovaCarreira.tsx`, envolver `<FormSection />` em um wrapper oculto acessível, preservando o `id="formulario"` como alvo de scroll:
+Em `src/pages/NovaCarreira.tsx`, trocar:
 
 ```tsx
 <div aria-hidden="true" className="hidden">
@@ -13,12 +14,17 @@ Em `src/pages/NovaCarreira.tsx`, envolver `<FormSection />` em um wrapper oculto
 </div>
 ```
 
-Como o `FormSection` já renderiza `<section id="formulario">`, o âncora continua existindo no DOM e os links `href="#formulario"` continuam funcionando — apenas sem nada visível no destino.
+por:
 
-### O que NÃO muda
-- Nenhum CTA é alterado (Header, Hero, InlineCTAs, FinalCTA continuam apontando para `#formulario`).
-- Rastreamento de cliques (`trackCtaClick`) intacto.
-- Edge function, banco e admin permanecem como estão (formulário pode ser reativado depois removendo o wrapper).
+```tsx
+<section id="formulario" aria-hidden="true" className="py-20 md:py-28" />
+```
+
+Isso:
+- Mantém a âncora `#formulario` no DOM como alvo de scroll.
+- Reserva espaço vertical (mesmo padding usado pelo `FormSection`) sem mostrar nada.
+- Remove totalmente o formulário da página (sem campos ocultos no DOM).
+- Não altera nenhum CTA — todos continuam funcionando.
 
 ### Arquivo afetado
-- `src/pages/NovaCarreira.tsx`
+- `src/pages/NovaCarreira.tsx` (também remover o import não usado de `FormSection`)
