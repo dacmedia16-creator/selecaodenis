@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Header } from "@/components/landing/Header";
 import { Footer } from "@/components/landing/Footer";
-import { FormSection } from "@/components/landing/FormSection";
+
 import { HeroMulheres } from "@/components/landing/nova-carreira/HeroMulheres";
 import { VoceSeReconhece } from "@/components/landing/nova-carreira/VoceSeReconhece";
 import { HistoriasReais } from "@/components/landing/nova-carreira/HistoriasReais";
@@ -73,9 +73,7 @@ const NovaCarreira = () => {
         <UnicaEscolhaStats />
         <MitosQueTravam />
         <InlineCTA source="inline_mitos" headline="Sem mais desculpas — bora começar?" buttonText="Estou pronta para começar" />
-        <div aria-hidden="true" className="hidden">
-          <FormSection />
-        </div>
+        <section id="formulario" aria-hidden="true" className="py-20 md:py-28" />
         <FinalCTA />
       </main>
       <Footer />
