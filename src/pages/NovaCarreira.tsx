@@ -73,7 +73,9 @@ const NovaCarreira = () => {
         <UnicaEscolhaStats />
         <MitosQueTravam />
         <InlineCTA source="inline_mitos" headline="Sem mais desculpas — bora começar?" buttonText="Estou pronta para começar" />
-        <FormSection />
+        <div aria-hidden="true" className="hidden">
+          <FormSection />
+        </div>
         <FinalCTA />
       </main>
       <Footer />
