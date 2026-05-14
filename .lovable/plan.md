@@ -1,30 +1,20 @@
-## Corrigir destino dos CTAs com formulário oculto
+## Gerar HTML 100% offline com imagens em base64
 
-### Problema
-O wrapper `hidden` (display:none) remove o `FormSection` do layout, então os links `#formulario` rolam até o próximo elemento visível (`FinalCTA`).
+**Objetivo:** Criar um arquivo HTML autocontido em `/mnt/documents/pagina_completa_offline.html` que possa ser aberto sem internet.
 
-### Solução
-Substituir o wrapper `hidden` por uma **seção placeholder vazia** com `id="formulario"` que ocupa espaço vertical equivalente, fazendo os CTAs rolarem para o "lugar" do formulário antigo.
+### Etapas
 
-Em `src/pages/NovaCarreira.tsx`, trocar:
+1. Ler o HTML existente em `/mnt/documents/pagina_completa.html`.
+2. Rodar um script Python que:
+   - Encontre todas as referências a imagens (`<img src>`, `srcset`, `<source>`, `background-image` em `style=`, `<link rel="icon">`, `og:image`, etc.).
+   - Baixe cada recurso (HTTP/HTTPS) com `requests`.
+   - Converta para `data:<mime>;base64,...` e substitua no HTML.
+   - Faça o mesmo para fontes/CSS externos relevantes (Google Fonts) — opcional, para preservar a tipografia offline.
+   - Remova/neutralize scripts que dependem de rede (analytics, etc.) para evitar erros offline.
+3. Salvar o resultado em `/mnt/documents/pagina_completa_offline.html`.
+4. Validar: verificar tamanho final e abrir uma prévia do arquivo para confirmar que renderiza.
+5. Entregar via `<presentation-artifact>` para download.
 
-```tsx
-<div aria-hidden="true" className="hidden">
-  <FormSection />
-</div>
-```
-
-por:
-
-```tsx
-<section id="formulario" aria-hidden="true" className="py-20 md:py-28" />
-```
-
-Isso:
-- Mantém a âncora `#formulario` no DOM como alvo de scroll.
-- Reserva espaço vertical (mesmo padding usado pelo `FormSection`) sem mostrar nada.
-- Remove totalmente o formulário da página (sem campos ocultos no DOM).
-- Não altera nenhum CTA — todos continuam funcionando.
-
-### Arquivo afetado
-- `src/pages/NovaCarreira.tsx` (também remover o import não usado de `FormSection`)
+### Observações
+- O arquivo final pode ficar grande (vários MB) por causa do base64 — isso é esperado.
+- Não altera nenhum código do projeto, é apenas geração de artefato.
