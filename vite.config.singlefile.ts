@@ -3,14 +3,22 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { viteSingleFile } from "vite-plugin-singlefile";
 
+const swapRouter = () => ({
+  name: "swap-browser-router-to-memory",
+  enforce: "pre" as const,
+  transform(code: string, id: string) {
+    if (id.endsWith("/src/App.tsx")) {
+      return code.replace(/BrowserRouter/g, "MemoryRouter");
+    }
+    return null;
+  },
+});
+
 export default defineConfig({
   base: "./",
-  plugins: [react(), viteSingleFile()],
+  plugins: [swapRouter(), react(), viteSingleFile()],
   resolve: {
-    alias: [
-      { find: /^react-router-dom$/, replacement: path.resolve(__dirname, "./scripts/react-router-dom-hash-shim.ts") },
-      { find: "@", replacement: path.resolve(__dirname, "./src") },
-    ],
+    alias: { "@": path.resolve(__dirname, "./src") },
     dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime", "@tanstack/react-query", "@tanstack/query-core"],
   },
   build: {
@@ -18,8 +26,6 @@ export default defineConfig({
     assetsInlineLimit: 100000000,
     chunkSizeWarningLimit: 100000,
     cssCodeSplit: false,
-    rollupOptions: {
-      output: { inlineDynamicImports: true },
-    },
+    rollupOptions: { output: { inlineDynamicImports: true } },
   },
 });
