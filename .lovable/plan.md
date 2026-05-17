@@ -1,21 +1,17 @@
-## Gerar versão offline fiel via build de produção
+## HTML único autocontido (abre com duplo clique)
 
-### O que vou fazer
-
-1. Rodar `npm run build` no projeto para gerar a pasta `dist/` com:
-   - `index.html` final
-   - CSS do Tailwind compilado
-   - JS bundle do React/Vite com hashes
-   - Todas as imagens importadas via `@/assets/...` já processadas
-2. Ajustar o `vite.config.ts` temporariamente (ou usar flag) para `base: "./"` no build, garantindo que os caminhos fiquem **relativos** — assim o `index.html` abre direto com duplo clique (`file://`) sem servidor.
-3. Compactar `dist/` em `/mnt/documents/site_offline.zip`.
-4. Entregar o ZIP via `<presentation-artifact>` para download.
-
-### Como usar depois
-- Descompactar o ZIP
-- Abrir `index.html` no navegador (duplo clique)
-- Todas imagens, fontes e estilos carregam localmente
+### Passos
+1. Instalar `vite-plugin-singlefile` como devDependency.
+2. Criar um config Vite separado (`vite.config.singlefile.ts`) com:
+   - `base: "./"`
+   - plugin `viteSingleFile()` para inlinear JS + CSS dentro do `index.html`
+   - `build.assetsInlineLimit: 100000000` para embutir imagens em base64
+   - `outDir: "dist-single"`
+3. Rodar `npx vite build --config vite.config.singlefile.ts`.
+4. Copiar `dist-single/index.html` para `/mnt/documents/site_offline_single.html`.
+5. Entregar via `<presentation-artifact>`.
 
 ### Observação
-- Conteúdo que depende de chamadas ao backend (envio do formulário de lead) não funciona offline — é só visualização.
-- O build é só um artefato; não altero código do projeto de forma permanente (se mexer no `vite.config.ts` para `base`, reverto ao final).
+- O arquivo deve ficar grande (~25MB) por causa das imagens inline — esperado.
+- Não altera `vite.config.ts` original (é um config separado só pro export).
+- Formulário de lead continua não funcionando offline (depende do backend).
