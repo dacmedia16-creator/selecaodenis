@@ -1,20 +1,21 @@
-## Gerar HTML 100% offline com imagens em base64
+## Gerar versão offline fiel via build de produção
 
-**Objetivo:** Criar um arquivo HTML autocontido em `/mnt/documents/pagina_completa_offline.html` que possa ser aberto sem internet.
+### O que vou fazer
 
-### Etapas
+1. Rodar `npm run build` no projeto para gerar a pasta `dist/` com:
+   - `index.html` final
+   - CSS do Tailwind compilado
+   - JS bundle do React/Vite com hashes
+   - Todas as imagens importadas via `@/assets/...` já processadas
+2. Ajustar o `vite.config.ts` temporariamente (ou usar flag) para `base: "./"` no build, garantindo que os caminhos fiquem **relativos** — assim o `index.html` abre direto com duplo clique (`file://`) sem servidor.
+3. Compactar `dist/` em `/mnt/documents/site_offline.zip`.
+4. Entregar o ZIP via `<presentation-artifact>` para download.
 
-1. Ler o HTML existente em `/mnt/documents/pagina_completa.html`.
-2. Rodar um script Python que:
-   - Encontre todas as referências a imagens (`<img src>`, `srcset`, `<source>`, `background-image` em `style=`, `<link rel="icon">`, `og:image`, etc.).
-   - Baixe cada recurso (HTTP/HTTPS) com `requests`.
-   - Converta para `data:<mime>;base64,...` e substitua no HTML.
-   - Faça o mesmo para fontes/CSS externos relevantes (Google Fonts) — opcional, para preservar a tipografia offline.
-   - Remova/neutralize scripts que dependem de rede (analytics, etc.) para evitar erros offline.
-3. Salvar o resultado em `/mnt/documents/pagina_completa_offline.html`.
-4. Validar: verificar tamanho final e abrir uma prévia do arquivo para confirmar que renderiza.
-5. Entregar via `<presentation-artifact>` para download.
+### Como usar depois
+- Descompactar o ZIP
+- Abrir `index.html` no navegador (duplo clique)
+- Todas imagens, fontes e estilos carregam localmente
 
-### Observações
-- O arquivo final pode ficar grande (vários MB) por causa do base64 — isso é esperado.
-- Não altera nenhum código do projeto, é apenas geração de artefato.
+### Observação
+- Conteúdo que depende de chamadas ao backend (envio do formulário de lead) não funciona offline — é só visualização.
+- O build é só um artefato; não altero código do projeto de forma permanente (se mexer no `vite.config.ts` para `base`, reverto ao final).
