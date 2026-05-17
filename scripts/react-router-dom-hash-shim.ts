@@ -1,4 +1,4 @@
-import * as RR from "react-router-dom";
+import * as RR from "react-router-dom/dist/index.js";
 
 export const BrowserRouter = RR.MemoryRouter;
 export const HashRouter = RR.HashRouter;
