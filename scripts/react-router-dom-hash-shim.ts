@@ -1,6 +1,6 @@
 import * as RR from "react-router-dom";
 export const {
-  HashRouter: BrowserRouter,
+  MemoryRouter: BrowserRouter,
   HashRouter,
   MemoryRouter,
   Routes,
