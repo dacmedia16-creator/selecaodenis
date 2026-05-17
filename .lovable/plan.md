@@ -1,17 +1,18 @@
-## HTML único autocontido (abre com duplo clique)
+## Trocar HashRouter por MemoryRouter no build offline
 
-### Passos
-1. Instalar `vite-plugin-singlefile` como devDependency.
-2. Criar um config Vite separado (`vite.config.singlefile.ts`) com:
-   - `base: "./"`
-   - plugin `viteSingleFile()` para inlinear JS + CSS dentro do `index.html`
-   - `build.assetsInlineLimit: 100000000` para embutir imagens em base64
-   - `outDir: "dist-single"`
-3. Rodar `npx vite build --config vite.config.singlefile.ts`.
-4. Copiar `dist-single/index.html` para `/mnt/documents/site_offline_single.html`.
-5. Entregar via `<presentation-artifact>`.
+### Problema
+Com `HashRouter`, links `<a href="#formulario">` mudam o hash para `#formulario`, e o router tenta navegar para a rota `/formulario` (que não existe), exibindo o 404. As âncoras de scroll quebram.
 
-### Observação
-- O arquivo deve ficar grande (~25MB) por causa das imagens inline — esperado.
-- Não altera `vite.config.ts` original (é um config separado só pro export).
-- Formulário de lead continua não funcionando offline (depende do backend).
+### Solução
+1. Editar `scripts/react-router-dom-hash-shim.ts` para re-exportar `MemoryRouter` no lugar de `BrowserRouter` (com `initialEntries={["/"]}`).
+   - `MemoryRouter` mantém o estado de rota em memória, sem tocar na URL → o `#formulario` continua sendo só uma âncora HTML pura.
+2. Rebuild com `npx vite build --config vite.config.singlefile.ts`.
+3. Substituir `/mnt/documents/site_offline_single.html` e entregar.
+
+### Verificação
+- Servir o arquivo via servidor local temporário e abrir no browser tool.
+- Confirmar: página renderiza Hero, clicar no botão "Quero saber mais" rola até o formulário (`#formulario`).
+- Confirmar links externos (WhatsApp `wa.me/...`) abrem normal.
+
+### Limitação aceita
+- Sem back/forward de rotas, sem deep link para `/nova-carreira` no offline. Vou avisar isso na entrega — se você quiser que `/nova-carreira` também funcione offline, posso gerar um segundo HTML específico para essa rota.
