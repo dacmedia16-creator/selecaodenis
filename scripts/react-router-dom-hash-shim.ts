@@ -1,2 +1,29 @@
-export * from "react-router-dom";
-export { HashRouter as BrowserRouter } from "react-router-dom";
+import * as RR from "react-router-dom";
+export const {
+  HashRouter: BrowserRouter,
+  HashRouter,
+  MemoryRouter,
+  Routes,
+  Route,
+  Link,
+  NavLink,
+  Navigate,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+  useMatch,
+  useRoutes,
+  useHref,
+  useResolvedPath,
+  useNavigationType,
+  useInRouterContext,
+  useOutlet,
+  useOutletContext,
+  matchPath,
+  matchRoutes,
+  createSearchParams,
+  generatePath,
+  resolvePath,
+} = RR;
