@@ -10,6 +10,7 @@ import { ConquistasPossiveis } from "@/components/landing/nova-carreira/Conquist
 import { UnicaEscolhaStats } from "@/components/landing/UnicaEscolhaStats";
 import { MitosQueTravam } from "@/components/landing/nova-carreira/MitosQueTravam";
 import { InlineCTA } from "@/components/landing/nova-carreira/InlineCTA";
+import { FormSection } from "@/components/landing/FormSection";
 import { FinalCTA } from "@/components/landing/FinalCTA";
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 
@@ -73,7 +74,7 @@ const NovaCarreira = () => {
         <UnicaEscolhaStats />
         <MitosQueTravam />
         <InlineCTA source="inline_mitos" headline="Sem mais desculpas — bora começar?" buttonText="Estou pronta para começar" />
-        <section id="formulario" aria-hidden="true" className="py-20 md:py-28" />
+        <FormSection />
         <FinalCTA />
       </main>
       <Footer />

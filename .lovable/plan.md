@@ -1,18 +1,21 @@
-## Trocar HashRouter por MemoryRouter no build offline
+## Problema
 
-### Problema
-Com `HashRouter`, links `<a href="#formulario">` mudam o hash para `#formulario`, e o router tenta navegar para a rota `/formulario` (que não existe), exibindo o 404. As âncoras de scroll quebram.
+Na página `/nova-carreira` (página principal), o `#formulario` foi substituído por uma `<section>` vazia (`aria-hidden`), então o formulário de lead não aparece — só restou o espaço em branco antes do CTA final.
 
-### Solução
-1. Editar `scripts/react-router-dom-hash-shim.ts` para re-exportar `MemoryRouter` no lugar de `BrowserRouter` (com `initialEntries={["/"]}`).
-   - `MemoryRouter` mantém o estado de rota em memória, sem tocar na URL → o `#formulario` continua sendo só uma âncora HTML pura.
-2. Rebuild com `npx vite build --config vite.config.singlefile.ts`.
-3. Substituir `/mnt/documents/site_offline_single.html` e entregar.
+## Mudança
 
-### Verificação
-- Servir o arquivo via servidor local temporário e abrir no browser tool.
-- Confirmar: página renderiza Hero, clicar no botão "Quero saber mais" rola até o formulário (`#formulario`).
-- Confirmar links externos (WhatsApp `wa.me/...`) abrem normal.
+Em `src/pages/NovaCarreira.tsx`:
 
-### Limitação aceita
-- Sem back/forward de rotas, sem deep link para `/nova-carreira` no offline. Vou avisar isso na entrega — se você quiser que `/nova-carreira` também funcione offline, posso gerar um segundo HTML específico para essa rota.
+1. Importar `FormSection` de `@/components/landing/FormSection`.
+2. Substituir a linha:
+   ```tsx
+   <section id="formulario" aria-hidden="true" className="py-20 md:py-28" />
+   ```
+   por:
+   ```tsx
+   <FormSection />
+   ```
+
+O `FormSection` já possui `id="formulario"`, então todas as âncoras (`#formulario`) dos CTAs (Header, Hero, InlineCTAs, FinalCTA) voltam a rolar até o formulário e o usuário consegue enviar os dados.
+
+Nenhuma outra alteração necessária — o `LeadForm` e a edge function `submit-lead` continuam funcionando.
