@@ -10,6 +10,7 @@ import { ConquistasPossiveis } from "@/components/landing/nova-carreira/Conquist
 import { UnicaEscolhaStats } from "@/components/landing/UnicaEscolhaStats";
 import { MitosQueTravam } from "@/components/landing/nova-carreira/MitosQueTravam";
 import { InlineCTA } from "@/components/landing/nova-carreira/InlineCTA";
+import { FormSection } from "@/components/landing/FormSection";
 import { FinalCTA } from "@/components/landing/FinalCTA";
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 
