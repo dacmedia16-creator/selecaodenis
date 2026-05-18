@@ -74,7 +74,7 @@ const NovaCarreira = () => {
         <UnicaEscolhaStats />
         <MitosQueTravam />
         <InlineCTA source="inline_mitos" headline="Sem mais desculpas — bora começar?" buttonText="Estou pronta para começar" />
-        <section id="formulario" aria-hidden="true" className="py-20 md:py-28" />
+        <FormSection />
         <FinalCTA />
       </main>
       <Footer />
