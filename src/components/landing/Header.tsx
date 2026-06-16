@@ -17,10 +17,8 @@ export const Header = () => {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-smooth",
-        scrolled
-          ? "bg-[hsl(220_80%_12%)]/95 backdrop-blur-lg shadow-soft"
-          : "bg-[hsl(220_80%_12%)]/80 backdrop-blur-md",
+        "fixed inset-x-0 top-0 z-50 transition-smooth bg-[hsl(220_80%_12%)]",
+        scrolled && "shadow-soft",
       )}
     >
       <div className="container flex h-16 items-center justify-between md:h-20">
