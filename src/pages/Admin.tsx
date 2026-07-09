@@ -195,7 +195,17 @@ const Admin = () => {
       toast.error("Nenhum lead para exportar.");
       return;
     }
-    const headers = ["Nome", "WhatsApp", "E-mail", "Cidade", "Já é corretor", "Motivação", "Recebido em"];
+    const headers = [
+      "Nome",
+      "WhatsApp",
+      "E-mail",
+      "Cidade",
+      "Já é corretor",
+      "Motivação",
+      "Status funil",
+      ...FUNNEL_QUESTIONS.map((q) => q.label),
+      "Recebido em",
+    ];
     const rows = filtered.map((l) => [
       l.name,
       l.whatsapp,
@@ -203,6 +213,8 @@ const Admin = () => {
       l.city,
       l.is_agent ? "Sim" : "Não",
       (l.attraction ?? "").replace(/\n/g, " "),
+      funnelStatus(l.funnel_step).label,
+      ...FUNNEL_QUESTIONS.map((q) => (l.funnel_answers?.[q.key] ?? "").replace(/\n/g, " ")),
       format(new Date(l.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR }),
     ]);
     const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
