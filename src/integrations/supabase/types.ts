@@ -47,6 +47,10 @@ export type Database = {
           city: string
           created_at: string
           email: string
+          funnel_answers: Json
+          funnel_last_question_at: string | null
+          funnel_retries: number
+          funnel_step: number
           id: string
           is_agent: boolean
           last_cta_source: string | null
@@ -58,6 +62,10 @@ export type Database = {
           city: string
           created_at?: string
           email: string
+          funnel_answers?: Json
+          funnel_last_question_at?: string | null
+          funnel_retries?: number
+          funnel_step?: number
           id?: string
           is_agent: boolean
           last_cta_source?: string | null
@@ -69,6 +77,10 @@ export type Database = {
           city?: string
           created_at?: string
           email?: string
+          funnel_answers?: Json
+          funnel_last_question_at?: string | null
+          funnel_retries?: number
+          funnel_step?: number
           id?: string
           is_agent?: boolean
           last_cta_source?: string | null
