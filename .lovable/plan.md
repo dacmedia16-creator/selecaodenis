@@ -1,42 +1,35 @@
-## Ajustes após ver o painel da ZionTalk
+## Plano
 
-### 1. Corrigir o parser da edge function
+1. **Confirmar a configuração no ZionTalk**
+   - A URL do print está correta:
+     `https://bnhuvpavzwdqwdzuiqvx.supabase.co/functions/v1/ziontalk-webhook`
+   - Manter método `POST` e gatilho `Mensagem recebida`.
+   - Salvar essa configuração no ZionTalk.
 
-O template JSON da ZionTalk manda:
+2. **Testar com uma mensagem real**
+   - Enviar uma mensagem de outro WhatsApp para o canal `15996512656 - RecrutaMAX`.
+   - Esperado: o webhook responder automaticamente com:
+     `Logo a REMAX vai entrar em contato aproveita e veja www.recrutamax.com.br`
+
+3. **Se não responder, verificar logs do backend**
+   - Conferir se o ZionTalk chamou o webhook.
+   - Verificar se chegou `evento: mensagem.recebida` e `contato.telefone`.
+   - Ajustar o parser ou o envio para ZionTalk conforme o erro real retornado.
+
+## Detalhe técnico
+
+O template JSON do print já envia exatamente os campos que a função foi ajustada para ler, principalmente:
 
 ```json
 {
   "evento": "mensagem.recebida",
-  "contato": { "nome": "...", "telefone": "+554699887766" },
-  "mensagem": { "texto": "...", "canal": "...", "tipo": "attachment" },
-  "timestamp": "..."
+  "contato": {
+    "telefone": "..."
+  },
+  "mensagem": {
+    "texto": "..."
+  }
 }
 ```
 
-Vou atualizar `supabase/functions/ziontalk-webhook/index.ts` para:
-
-- Ler o telefone de `payload.contato.telefone` (formato oficial), mantendo os fallbacks antigos.
-- Confirmar o evento `mensagem.recebida` antes de responder (evita processar outros gatilhos).
-- Continuar logando o payload cru para depuração.
-
-### 2. Você precisa trocar a URL na ZionTalk
-
-A URL que está no campo **URL de destino** não é a da nossa função. Substituir por:
-
-```
-https://bnhuvpavzwdqwdzuiqvx.supabase.co/functions/v1/ziontalk-webhook
-```
-
-Passos no painel ZionTalk:
-1. Abrir o webhook **Agenda Denis**.
-2. No gatilho **Mensagem recebida**, colar a URL acima em **URL de destino**.
-3. Manter método **POST** e o **Template JSON** que já está.
-4. Salvar.
-
-### 3. Testar
-
-Manda uma mensagem de teste pelo WhatsApp. Se algo falhar, eu leio os logs da função (`ziontalk-webhook`) e ajusto.
-
-### Observação
-
-Não precisa mexer no frontend. Só a edge function e a configuração do webhook na ZionTalk.
+Então o próximo passo é salvar no ZionTalk e fazer o teste real; só precisamos mexer no código se os logs mostrarem falha no disparo ou no envio da resposta.
