@@ -1,35 +1,26 @@
-## Plano
+## Objetivo
+Quando um contato WhatsApp mandar mensagem no canal RecrutaMAX, o webhook além de responder automaticamente também cadastra o contato como lead no painel /admin.
 
-1. **Confirmar a configuração no ZionTalk**
-   - A URL do print está correta:
-     `https://bnhuvpavzwdqwdzuiqvx.supabase.co/functions/v1/ziontalk-webhook`
-   - Manter método `POST` e gatilho `Mensagem recebida`.
-   - Salvar essa configuração no ZionTalk.
+## Mudanças
 
-2. **Testar com uma mensagem real**
-   - Enviar uma mensagem de outro WhatsApp para o canal `15996512656 - RecrutaMAX`.
-   - Esperado: o webhook responder automaticamente com:
-     `Logo a REMAX vai entrar em contato aproveita e veja www.recrutamax.com.br`
+### 1) `supabase/functions/ziontalk-webhook/index.ts`
+- Após validar o payload de `mensagem.recebida` e ter telefone válido, inserir na tabela `public.leads` usando o `SUPABASE_SERVICE_ROLE_KEY` (contorna RLS).
+- Campos:
+  - `name`: `payload.contato.nome` (fallback: `primeiro_nome`, ou "Contato WhatsApp")
+  - `whatsapp`: telefone normalizado (formato `+55DDNÚMERO`)
+  - `email`: `whatsapp@recrutamax.lead` (placeholder, coluna é NOT NULL)
+  - `city`: "Não informado" (NOT NULL)
+  - `is_agent`: `false`
+  - `attraction`: "WhatsApp Inbound"
+  - `last_cta_source`: `payload.mensagem.canal` (ex: "15996512656 - RecrutaMAX")
+- Deduplicar: antes de inserir, checar se já existe lead com mesmo `whatsapp` — se existir, pular insert (só responde a mensagem).
+- Manter envio da resposta automática igual ao atual.
+- Logar sucesso/erro do insert sem quebrar a resposta.
 
-3. **Se não responder, verificar logs do backend**
-   - Conferir se o ZionTalk chamou o webhook.
-   - Verificar se chegou `evento: mensagem.recebida` e `contato.telefone`.
-   - Ajustar o parser ou o envio para ZionTalk conforme o erro real retornado.
+### 2) `src/pages/Admin.tsx` (mínimo)
+- Nenhuma mudança estrutural: leads novos aparecem automaticamente no fetch existente.
+- Opcional: adicionar "WhatsApp Inbound" ao filtro de atração (se houver dropdown fixo). Confirmar ao explorar — se filtro é livre, nada a fazer.
 
-## Detalhe técnico
-
-O template JSON do print já envia exatamente os campos que a função foi ajustada para ler, principalmente:
-
-```json
-{
-  "evento": "mensagem.recebida",
-  "contato": {
-    "telefone": "..."
-  },
-  "mensagem": {
-    "texto": "..."
-  }
-}
-```
-
-Então o próximo passo é salvar no ZionTalk e fazer o teste real; só precisamos mexer no código se os logs mostrarem falha no disparo ou no envio da resposta.
+## Pontos a confirmar
+- Confirmo que o email placeholder `<whatsapp>@recrutamax.lead` está OK, já que a coluna `email` é NOT NULL e o WhatsApp não fornece email? (Alternativa: tornar a coluna nullable via migração — mas é mudança de schema além do pedido.)
+- Deduplicar por `whatsapp` (não recadastrar o mesmo número em cada mensagem nova) — OK?
