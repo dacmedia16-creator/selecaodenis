@@ -26,10 +26,15 @@ function pickChannel(payload: any): string | null {
   return typeof c === 'string' && c.trim().length > 0 ? c.trim() : null;
 }
 
-function formatWhatsapp(mobilePhone: string, cd?: string): string {
-  if (cd) return `${cd}${mobilePhone}`;
-  if (mobilePhone.startsWith('+')) return mobilePhone;
-  return mobilePhone;
+function digitsOnlyBR(mobilePhone: string, cd?: string): string {
+  const raw = `${cd ?? ''}${mobilePhone}`.replace(/\D/g, '');
+  if (raw.startsWith('55') && (raw.length === 12 || raw.length === 13)) return raw;
+  if (raw.length === 10 || raw.length === 11) return `55${raw}`;
+  return raw;
+}
+
+function toE164BR(digits: string): string {
+  return `+${digits}`;
 }
 
 async function upsertLead(payload: any, mobilePhone: string, cd?: string) {
@@ -37,24 +42,31 @@ async function upsertLead(payload: any, mobilePhone: string, cd?: string) {
     console.error('[ziontalk-webhook] supabase admin client not configured');
     return;
   }
-  const whatsapp = formatWhatsapp(mobilePhone, cd);
+  const digits = digitsOnlyBR(mobilePhone, cd);
+  const last10 = digits.slice(-10);
+  if (last10.length < 10) {
+    console.log('[ziontalk-webhook] phone too short, skipping lead upsert');
+    return;
+  }
+  const whatsapp = toE164BR(digits);
   try {
+    // Lookup por sufixo (últimos 10 dígitos) para casar leads antigos com formatos distintos
     const { data: existing, error: selErr } = await admin
       .from('leads')
-      .select('id')
-      .eq('whatsapp', whatsapp)
-      .maybeSingle();
+      .select('id, whatsapp')
+      .ilike('whatsapp', `%${last10}`)
+      .limit(1);
     if (selErr) {
       console.error('[ziontalk-webhook] lead lookup error:', selErr.message);
       return;
     }
-    if (existing) {
-      console.log(`[ziontalk-webhook] lead already exists for ${whatsapp}`);
+    if (existing && existing.length > 0) {
+      console.log(`[ziontalk-webhook] lead já existe para ${whatsapp} (match: ${existing[0].whatsapp})`);
       return;
     }
     const name = pickName(payload);
     const channel = pickChannel(payload);
-    const emailPlaceholder = `${whatsapp.replace(/\D/g, '')}@whatsapp.recrutamax.lead`;
+    const emailPlaceholder = `${digits}@whatsapp.recrutamax.lead`;
     const { error: insErr } = await admin.from('leads').insert({
       name,
       whatsapp,
@@ -65,7 +77,12 @@ async function upsertLead(payload: any, mobilePhone: string, cd?: string) {
       last_cta_source: channel ?? 'whatsapp_inbound',
     });
     if (insErr) {
-      console.error('[ziontalk-webhook] lead insert error:', insErr.message);
+      // 23505 = unique_violation -> tratado como "já existe"
+      if ((insErr as any).code === '23505') {
+        console.log(`[ziontalk-webhook] lead duplicado bloqueado pelo índice único: ${whatsapp}`);
+      } else {
+        console.error('[ziontalk-webhook] lead insert error:', insErr.message);
+      }
     } else {
       console.log(`[ziontalk-webhook] lead cadastrado: ${name} ${whatsapp}`);
     }
