@@ -207,6 +207,10 @@ Deno.serve(async (req) => {
     }
 
     const { mobilePhone, cd } = normalizePhone(phone);
+
+    // Cadastra o contato como lead no painel (não bloqueia a resposta)
+    await upsertLead(payload, mobilePhone, cd);
+
     const form = new FormData();
     form.append('msg', REPLY_MESSAGE);
     form.append('mobile_phone', mobilePhone);
