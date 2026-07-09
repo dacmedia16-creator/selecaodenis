@@ -48,6 +48,7 @@ export type Database = {
           created_at: string
           email: string
           funnel_answers: Json
+          funnel_followup_stage: number
           funnel_last_question_at: string | null
           funnel_retries: number
           funnel_step: number
@@ -63,6 +64,7 @@ export type Database = {
           created_at?: string
           email: string
           funnel_answers?: Json
+          funnel_followup_stage?: number
           funnel_last_question_at?: string | null
           funnel_retries?: number
           funnel_step?: number
@@ -78,6 +80,7 @@ export type Database = {
           created_at?: string
           email?: string
           funnel_answers?: Json
+          funnel_followup_stage?: number
           funnel_last_question_at?: string | null
           funnel_retries?: number
           funnel_step?: number

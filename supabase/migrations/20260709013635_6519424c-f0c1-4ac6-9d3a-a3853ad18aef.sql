@@ -1,0 +1,1 @@
+ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS funnel_followup_stage int NOT NULL DEFAULT 0;
