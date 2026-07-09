@@ -64,6 +64,9 @@ interface Lead {
   attraction: string | null;
   created_at: string;
   last_cta_source: string | null;
+  funnel_step: number | null;
+  funnel_answers: Record<string, string> | null;
+  funnel_last_question_at: string | null;
 }
 
 const CTA_LABELS: Record<string, string> = {
@@ -75,6 +78,26 @@ const CTA_LABELS: Record<string, string> = {
   inline_mitos: "CTA após Mitos",
   final_cta: "CTA final",
 };
+
+const FUNNEL_QUESTIONS: { key: string; label: string }[] = [
+  { key: "nome", label: "Nome" },
+  { key: "trabalha_atualmente", label: "Trabalha atualmente?" },
+  { key: "renda_ou_profissao", label: "Renda extra ou nova profissão?" },
+  { key: "experiencia_vendas", label: "Já trabalhou com vendas ou atendimento?" },
+  { key: "disponibilidade_treinamento", label: "Disponibilidade para treinamento?" },
+  { key: "entende_comissao", label: "Entende que corretor é por comissão?" },
+  { key: "interesse_conversa", label: "Interesse em conhecer o plano de carreira?" },
+];
+
+const TOTAL_FUNNEL_STEPS = FUNNEL_QUESTIONS.length;
+
+function funnelStatus(step: number | null | undefined) {
+  const s = step ?? 0;
+  if (s === 0) return { label: "Não iniciado", variant: "secondary" as const };
+  if (s > TOTAL_FUNNEL_STEPS) return { label: "Concluído", variant: "default" as const };
+  return { label: `Em andamento (${s - 1}/${TOTAL_FUNNEL_STEPS})`, variant: "outline" as const };
+}
+
 
 const Admin = () => {
   const navigate = useNavigate();
