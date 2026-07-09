@@ -346,10 +346,36 @@ async function runFunnel(
 
   if (nextStep > QUESTIONS.length) {
     await sendWhatsapp(mobilePhone, cd, FINAL_MESSAGE);
+    // Notifica gestor com resumo do lead + respostas
+    await notifyManager(lead, newAnswers, mobilePhone, cd);
   } else {
     await sendWhatsapp(mobilePhone, cd, QUESTIONS[nextStep - 1].question);
   }
 }
+
+const MANAGER_PHONE = '15981788214';
+const MANAGER_CD = '+55';
+
+async function notifyManager(
+  lead: any,
+  answers: Record<string, any>,
+  leadMobile: string,
+  leadCd: string | undefined,
+) {
+  const leadWhatsapp = leadCd ? `${leadCd} ${leadMobile}` : leadMobile;
+  const name = answers['nome'] || lead.name || 'Sem nome';
+  const lines = [
+    '📋 Novo lead qualificado — RE/MAX',
+    '',
+    `Nome: ${name}`,
+    `WhatsApp: ${leadWhatsapp}`,
+    '',
+    'Respostas:',
+    ...QUESTIONS.map((q, i) => `${i + 1}. ${q.question} ${answers[q.key] ?? '—'}`),
+  ];
+  await sendWhatsapp(MANAGER_PHONE, MANAGER_CD, lines.join('\n'));
+}
+
 
 // ==================== HTTP HANDLER ====================
 
