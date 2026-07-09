@@ -598,6 +598,9 @@ const LeadCard = ({
         </div>
       )}
 
+      <FunnelDetails lead={lead} className="mt-3" />
+
+
       <div className="mt-3 grid grid-cols-2 gap-2">
         <Button asChild size="sm" className="h-10 gradient-cta border-0 text-white">
           <a href={`https://wa.me/${wa}`} target="_blank" rel="noopener noreferrer">
