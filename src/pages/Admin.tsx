@@ -64,6 +64,9 @@ interface Lead {
   attraction: string | null;
   created_at: string;
   last_cta_source: string | null;
+  funnel_step: number | null;
+  funnel_answers: Record<string, string> | null;
+  funnel_last_question_at: string | null;
 }
 
 const CTA_LABELS: Record<string, string> = {
@@ -75,6 +78,26 @@ const CTA_LABELS: Record<string, string> = {
   inline_mitos: "CTA após Mitos",
   final_cta: "CTA final",
 };
+
+const FUNNEL_QUESTIONS: { key: string; label: string }[] = [
+  { key: "nome", label: "Nome" },
+  { key: "trabalha_atualmente", label: "Trabalha atualmente?" },
+  { key: "renda_ou_profissao", label: "Renda extra ou nova profissão?" },
+  { key: "experiencia_vendas", label: "Já trabalhou com vendas ou atendimento?" },
+  { key: "disponibilidade_treinamento", label: "Disponibilidade para treinamento?" },
+  { key: "entende_comissao", label: "Entende que corretor é por comissão?" },
+  { key: "interesse_conversa", label: "Interesse em conhecer o plano de carreira?" },
+];
+
+const TOTAL_FUNNEL_STEPS = FUNNEL_QUESTIONS.length;
+
+function funnelStatus(step: number | null | undefined) {
+  const s = step ?? 0;
+  if (s === 0) return { label: "Não iniciado", variant: "secondary" as const };
+  if (s > TOTAL_FUNNEL_STEPS) return { label: "Concluído", variant: "default" as const };
+  return { label: `Em andamento (${s - 1}/${TOTAL_FUNNEL_STEPS})`, variant: "outline" as const };
+}
+
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -172,7 +195,17 @@ const Admin = () => {
       toast.error("Nenhum lead para exportar.");
       return;
     }
-    const headers = ["Nome", "WhatsApp", "E-mail", "Cidade", "Já é corretor", "Motivação", "Recebido em"];
+    const headers = [
+      "Nome",
+      "WhatsApp",
+      "E-mail",
+      "Cidade",
+      "Já é corretor",
+      "Motivação",
+      "Status funil",
+      ...FUNNEL_QUESTIONS.map((q) => q.label),
+      "Recebido em",
+    ];
     const rows = filtered.map((l) => [
       l.name,
       l.whatsapp,
@@ -180,6 +213,8 @@ const Admin = () => {
       l.city,
       l.is_agent ? "Sim" : "Não",
       (l.attraction ?? "").replace(/\n/g, " "),
+      funnelStatus(l.funnel_step).label,
+      ...FUNNEL_QUESTIONS.map((q) => (l.funnel_answers?.[q.key] ?? "").replace(/\n/g, " ")),
       format(new Date(l.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR }),
     ]);
     const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
@@ -431,11 +466,13 @@ const Admin = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-8"></TableHead>
                       <TableHead>Nome</TableHead>
                       <TableHead>WhatsApp</TableHead>
                       <TableHead>E-mail</TableHead>
                       <TableHead>Cidade</TableHead>
                       <TableHead>Corretor</TableHead>
+                      <TableHead>Funil</TableHead>
                       <TableHead>Motivação</TableHead>
                       <TableHead className="text-right">Recebido</TableHead>
                       <TableHead className="w-12 text-right">Ações</TableHead>
@@ -443,46 +480,10 @@ const Admin = () => {
                   </TableHeader>
                   <TableBody>
                     {filtered.map((l) => (
-                      <TableRow key={l.id}>
-                        <TableCell className="font-medium">{l.name}</TableCell>
-                        <TableCell>
-                          <a
-                            href={`https://wa.me/${l.whatsapp.replace(/\D/g, "")}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary hover:underline"
-                          >
-                            {l.whatsapp}
-                          </a>
-                        </TableCell>
-                        <TableCell>
-                          <a href={`mailto:${l.email}`} className="text-primary hover:underline">
-                            {l.email}
-                          </a>
-                        </TableCell>
-                        <TableCell>{l.city}</TableCell>
-                        <TableCell>
-                          {l.is_agent ? (
-                            <Badge variant="default">Sim</Badge>
-                          ) : (
-                            <Badge variant="secondary">Não</Badge>
-                          )}
-                        </TableCell>
-                        <TableCell
-                          className="max-w-xs truncate text-muted-foreground"
-                          title={l.attraction ?? ""}
-                        >
-                          {l.attraction || "—"}
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap text-right text-sm text-muted-foreground">
-                          {format(new Date(l.created_at), "dd/MM/yy HH:mm", { locale: ptBR })}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <DeleteLeadDialog lead={l} onDelete={handleDelete} />
-                        </TableCell>
-                      </TableRow>
+                      <LeadRow key={l.id} lead={l} onDelete={handleDelete} />
                     ))}
                   </TableBody>
+
                 </Table>
               </div>
             </div>
@@ -597,6 +598,9 @@ const LeadCard = ({
         </div>
       )}
 
+      <FunnelDetails lead={lead} className="mt-3" />
+
+
       <div className="mt-3 grid grid-cols-2 gap-2">
         <Button asChild size="sm" className="h-10 gradient-cta border-0 text-white">
           <a href={`https://wa.me/${wa}`} target="_blank" rel="noopener noreferrer">
@@ -654,4 +658,115 @@ const DeleteLeadDialog = ({
   </AlertDialog>
 );
 
+const FunnelDetails = ({ lead, className }: { lead: Lead; className?: string }) => {
+  const status = funnelStatus(lead.funnel_step);
+  const answers = lead.funnel_answers ?? {};
+  const hasAny = FUNNEL_QUESTIONS.some((q) => answers[q.key]);
+  return (
+    <div className={`rounded-lg border border-border bg-muted/30 p-3 ${className ?? ""}`}>
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+          Funil de qualificação
+        </p>
+        <Badge variant={status.variant} className="text-[10px]">
+          {status.label}
+        </Badge>
+      </div>
+      {hasAny ? (
+        <ol className="space-y-2 text-sm">
+          {FUNNEL_QUESTIONS.map((q, i) => (
+            <li key={q.key} className="grid gap-0.5">
+              <span className="text-[11px] font-medium text-muted-foreground">
+                {i + 1}. {q.label}
+              </span>
+              <span className="text-foreground">{answers[q.key] || "—"}</span>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="text-sm text-muted-foreground">Nenhuma resposta ainda.</p>
+      )}
+    </div>
+  );
+};
+
+const LeadRow = ({
+  lead,
+  onDelete,
+}: {
+  lead: Lead;
+  onDelete: (id: string, name: string) => void;
+}) => {
+  const [open, setOpen] = useState(false);
+  const status = funnelStatus(lead.funnel_step);
+  return (
+    <>
+      <TableRow>
+        <TableCell className="w-8">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Recolher respostas" : "Ver respostas"}
+          >
+            <ChevronDown
+              className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}
+            />
+          </Button>
+        </TableCell>
+        <TableCell className="font-medium">{lead.name}</TableCell>
+        <TableCell>
+          <a
+            href={`https://wa.me/${lead.whatsapp.replace(/\D/g, "")}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            {lead.whatsapp}
+          </a>
+        </TableCell>
+        <TableCell>
+          <a href={`mailto:${lead.email}`} className="text-primary hover:underline">
+            {lead.email}
+          </a>
+        </TableCell>
+        <TableCell>{lead.city}</TableCell>
+        <TableCell>
+          {lead.is_agent ? (
+            <Badge variant="default">Sim</Badge>
+          ) : (
+            <Badge variant="secondary">Não</Badge>
+          )}
+        </TableCell>
+        <TableCell>
+          <Badge variant={status.variant} className="whitespace-nowrap">
+            {status.label}
+          </Badge>
+        </TableCell>
+        <TableCell
+          className="max-w-xs truncate text-muted-foreground"
+          title={lead.attraction ?? ""}
+        >
+          {lead.attraction || "—"}
+        </TableCell>
+        <TableCell className="whitespace-nowrap text-right text-sm text-muted-foreground">
+          {format(new Date(lead.created_at), "dd/MM/yy HH:mm", { locale: ptBR })}
+        </TableCell>
+        <TableCell className="text-right">
+          <DeleteLeadDialog lead={lead} onDelete={onDelete} />
+        </TableCell>
+      </TableRow>
+      {open && (
+        <TableRow>
+          <TableCell colSpan={10} className="bg-muted/20">
+            <FunnelDetails lead={lead} />
+          </TableCell>
+        </TableRow>
+      )}
+    </>
+  );
+};
+
 export default Admin;
+
