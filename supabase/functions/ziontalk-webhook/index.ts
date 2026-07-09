@@ -1,8 +1,78 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
+import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const ZIONTALK_API_KEY = Deno.env.get('ZIONTALK_API_KEY') ?? '';
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 const REPLY_MESSAGE =
   'Logo a REMAX vai entrar em contato aproveita e veja www.recrutamax.com.br';
+
+const admin = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
+  ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } })
+  : null;
+
+function pickName(payload: any): string {
+  const n =
+    payload?.contato?.nome ??
+    payload?.contato?.primeiro_nome ??
+    payload?.contact?.name ??
+    payload?.name;
+  if (typeof n === 'string' && n.trim().length > 0) return n.trim();
+  return 'Contato WhatsApp';
+}
+
+function pickChannel(payload: any): string | null {
+  const c = payload?.mensagem?.canal ?? payload?.message?.channel ?? payload?.channel;
+  return typeof c === 'string' && c.trim().length > 0 ? c.trim() : null;
+}
+
+function formatWhatsapp(mobilePhone: string, cd?: string): string {
+  if (cd) return `${cd}${mobilePhone}`;
+  if (mobilePhone.startsWith('+')) return mobilePhone;
+  return mobilePhone;
+}
+
+async function upsertLead(payload: any, mobilePhone: string, cd?: string) {
+  if (!admin) {
+    console.error('[ziontalk-webhook] supabase admin client not configured');
+    return;
+  }
+  const whatsapp = formatWhatsapp(mobilePhone, cd);
+  try {
+    const { data: existing, error: selErr } = await admin
+      .from('leads')
+      .select('id')
+      .eq('whatsapp', whatsapp)
+      .maybeSingle();
+    if (selErr) {
+      console.error('[ziontalk-webhook] lead lookup error:', selErr.message);
+      return;
+    }
+    if (existing) {
+      console.log(`[ziontalk-webhook] lead already exists for ${whatsapp}`);
+      return;
+    }
+    const name = pickName(payload);
+    const channel = pickChannel(payload);
+    const emailPlaceholder = `${whatsapp.replace(/\D/g, '')}@whatsapp.recrutamax.lead`;
+    const { error: insErr } = await admin.from('leads').insert({
+      name,
+      whatsapp,
+      email: emailPlaceholder,
+      city: 'Não informado',
+      is_agent: false,
+      attraction: 'WhatsApp Inbound',
+      last_cta_source: channel ?? 'whatsapp_inbound',
+    });
+    if (insErr) {
+      console.error('[ziontalk-webhook] lead insert error:', insErr.message);
+    } else {
+      console.log(`[ziontalk-webhook] lead cadastrado: ${name} ${whatsapp}`);
+    }
+  } catch (e) {
+    console.error('[ziontalk-webhook] upsertLead exception:', String(e));
+  }
+}
 
 function normalizePhone(rawPhone: string): { mobilePhone: string; cd?: string } {
   const trimmed = rawPhone.trim();
@@ -137,6 +207,10 @@ Deno.serve(async (req) => {
     }
 
     const { mobilePhone, cd } = normalizePhone(phone);
+
+    // Cadastra o contato como lead no painel (não bloqueia a resposta)
+    await upsertLead(payload, mobilePhone, cd);
+
     const form = new FormData();
     form.append('msg', REPLY_MESSAGE);
     form.append('mobile_phone', mobilePhone);
