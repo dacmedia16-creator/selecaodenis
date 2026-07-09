@@ -466,11 +466,13 @@ const Admin = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-8"></TableHead>
                       <TableHead>Nome</TableHead>
                       <TableHead>WhatsApp</TableHead>
                       <TableHead>E-mail</TableHead>
                       <TableHead>Cidade</TableHead>
                       <TableHead>Corretor</TableHead>
+                      <TableHead>Funil</TableHead>
                       <TableHead>Motivação</TableHead>
                       <TableHead className="text-right">Recebido</TableHead>
                       <TableHead className="w-12 text-right">Ações</TableHead>
@@ -478,46 +480,10 @@ const Admin = () => {
                   </TableHeader>
                   <TableBody>
                     {filtered.map((l) => (
-                      <TableRow key={l.id}>
-                        <TableCell className="font-medium">{l.name}</TableCell>
-                        <TableCell>
-                          <a
-                            href={`https://wa.me/${l.whatsapp.replace(/\D/g, "")}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary hover:underline"
-                          >
-                            {l.whatsapp}
-                          </a>
-                        </TableCell>
-                        <TableCell>
-                          <a href={`mailto:${l.email}`} className="text-primary hover:underline">
-                            {l.email}
-                          </a>
-                        </TableCell>
-                        <TableCell>{l.city}</TableCell>
-                        <TableCell>
-                          {l.is_agent ? (
-                            <Badge variant="default">Sim</Badge>
-                          ) : (
-                            <Badge variant="secondary">Não</Badge>
-                          )}
-                        </TableCell>
-                        <TableCell
-                          className="max-w-xs truncate text-muted-foreground"
-                          title={l.attraction ?? ""}
-                        >
-                          {l.attraction || "—"}
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap text-right text-sm text-muted-foreground">
-                          {format(new Date(l.created_at), "dd/MM/yy HH:mm", { locale: ptBR })}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <DeleteLeadDialog lead={l} onDelete={handleDelete} />
-                        </TableCell>
-                      </TableRow>
+                      <LeadRow key={l.id} lead={l} onDelete={handleDelete} />
                     ))}
                   </TableBody>
+
                 </Table>
               </div>
             </div>
