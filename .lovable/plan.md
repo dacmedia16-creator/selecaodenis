@@ -1,55 +1,65 @@
 ## Objetivo
 
-Garantir que cada número de WhatsApp gere **apenas 1 lead**, mesmo quando:
-- o mesmo contato envia várias mensagens em datas diferentes;
-- o número chega em formatos distintos (`+5515981788214`, `5515981788214`, `15981788214`, com/sem `+`, com/sem `55`, com espaços ou parênteses);
-- o lead já foi cadastrado manualmente pelo formulário do site com formato diferente.
+Quando um lead mandar mensagem no WhatsApp, iniciar uma cadência de 7 perguntas — uma por vez. Cada resposta é validada pela IA (Lovable AI / Gemini) antes de avançar: se fizer sentido, envia a próxima; se não fizer, reformula e repete a mesma. No final envia o link `www.recrutamax.com.br` + aviso "logo a RE/MAX vai entrar em contato".
 
-## Como funciona hoje
+## Roteiro fixo (na ordem)
 
-No `ziontalk-webhook`, a checagem é por igualdade exata na coluna `whatsapp`. Se o mesmo número for salvo uma vez como `+5515981788214` e outra como `5515981788214`, vira 2 leads. Também não há proteção no banco: se duas mensagens chegarem quase simultaneamente, dá pra inserir duplicado por corrida.
+0. **Abertura** — "Oi, tudo bem? Vi que você se interessou pela oportunidade de carreira na RE/MAX. Antes de te explicar tudo, posso te fazer algumas perguntinhas rápidas para entender se faz sentido para você?"
+1. Qual seu nome?
+2. Você trabalha atualmente?
+3. Está buscando renda extra ou nova profissão?
+4. Já trabalhou com vendas ou atendimento?
+5. Você tem disponibilidade para treinamento?
+6. Você entende que corretor trabalha por comissão, sem salário fixo no início?
+7. Se fizer sentido, você teria interesse em participar de uma conversa para conhecer o plano de carreira da RE/MAX?
 
-## O que vai mudar
+**Mensagem final:** "Perfeito! Acesse www.recrutamax.com.br para conhecer mais. Logo a RE/MAX vai entrar em contato com você. 🏡"
 
-### 1. Normalização única do telefone (webhook)
-Criar um helper `digitsOnlyBR(phone)` que:
-- remove tudo que não é dígito;
-- se começar com `55` e tiver 12–13 dígitos, mantém;
-- se tiver 10 ou 11 dígitos (DDD + número), prefixa `55`;
-- resultado sempre no formato canônico `55DDNNNNNNNNN`.
+## Como vai funcionar
 
-O valor gravado em `leads.whatsapp` passa a ser sempre `+55DDNNNNNNNNN`.
+### 1. Estado da conversa em `leads` (colunas extras)
+Adicionar em `public.leads`:
+- `funnel_step` int — próxima pergunta a enviar (0 = abertura, 1..7 = perguntas, 8 = finalizado)
+- `funnel_answers` jsonb — respostas coletadas (`{ "trabalha_atualmente": "sim, sou vendedor", ... }`)
+- `funnel_last_question_at` timestamptz — quando a última pergunta foi enviada
+- `funnel_retries` int default 0 — tentativas de reformulação da pergunta atual (limite de 2)
 
-### 2. Lookup por sufixo (compatibilidade com leads antigos)
-Antes de inserir, buscar leads existentes comparando **apenas os últimos 10 dígitos** (DDD + número, ignorando código de país). Assim, um lead antigo salvo como `15981788214` ainda é reconhecido como o mesmo `+5515981788214`.
+Lead novo entra em `funnel_step = 0`. Lead já existente com `funnel_step = 8` recebe apenas uma mensagem curta de "já recebemos seus dados" e não reinicia o fluxo.
 
-Se encontrar → apenas loga e não insere.
+### 2. Fluxo no `ziontalk-webhook`
+Ao receber uma mensagem inbound:
+1. Extrai telefone e texto da mensagem.
+2. `upsertLead` (já existente) — garante 1 lead por número.
+3. Lê `funnel_step` e `funnel_answers` do lead.
+4. **Se `funnel_step == 0`**: envia abertura + pergunta 1, seta `funnel_step = 1`, salva timestamp.
+5. **Se `1 <= funnel_step <= 7`**: chama a IA para validar se a resposta responde a pergunta atual.
+   - Se **válida** → salva resposta em `funnel_answers`, incrementa `funnel_step`, zera `retries`, envia próxima pergunta (ou mensagem final se passou de 7).
+   - Se **inválida** e `retries < 2` → incrementa `retries`, pede a IA reformular a mesma pergunta de forma mais clara e envia.
+   - Se **inválida** e `retries >= 2` → aceita mesmo assim (salva o texto cru), avança para próxima pergunta.
+6. **Se `funnel_step >= 8`**: responde algo curto tipo "Já recebemos seus dados, em breve entramos em contato 🏡" e não avança.
 
-### 3. Proteção no banco (índice único)
-Adicionar um índice único funcional em `public.leads` sobre os últimos 10 dígitos do `whatsapp`:
+### 3. Validação e reformulação por IA
+Chamar Lovable AI Gateway (modelo `google/gemini-3-flash-preview`) dentro do próprio edge function, usando `LOVABLE_API_KEY` (já configurada). Usa `generateText` + `Output.object` com um schema mínimo:
 
-```text
-UNIQUE INDEX leads_whatsapp_digits_unique
-ON public.leads ( right(regexp_replace(whatsapp,'\D','','g'), 10) )
+```
+{ "faz_sentido": boolean, "resposta_normalizada": string, "proxima_pergunta_reformulada": string }
 ```
 
-Isso impede duplicados mesmo em condição de corrida ou inserções vindas de outras origens (formulário do site, importação manual).
+Prompt inclui: pergunta atual, texto do usuário, contexto (é uma triagem para vaga de corretor RE/MAX). O modelo decide se a resposta cabe na pergunta e devolve uma versão limpa para salvar em `funnel_answers`.
 
-### 4. Migração de dados existentes
-Antes de criar o índice, consolidar duplicados já presentes: manter o registro mais antigo de cada número (por `created_at`) e apagar os demais. Depois criar o índice.
+### 4. Envio das mensagens
+Continua usando o endpoint `https://app.ziontalk.com/api/send_message/` já em uso. Sem mudanças no site, no painel `/admin` ou no formulário — apenas o webhook e a tabela `leads`.
 
-### 5. Tratamento de erro no insert
-Se o insert ainda falhar por violação do índice único (23505), o webhook trata como “já existe” — não é erro, apenas loga e segue com a resposta ao WhatsApp normalmente.
+### 5. Painel `/admin`
+Já mostra os leads. As respostas do funil ficam visíveis via a coluna `funnel_answers` (jsonb). Fica para uma próxima iteração adicionar uma coluna renderizada no admin — não faz parte deste plano.
 
-## Detalhes técnicos
+## Arquivos alterados
 
-Arquivos alterados:
-- `supabase/functions/ziontalk-webhook/index.ts`
-  - substitui `formatWhatsapp` por `digitsOnlyBR` + `toE164BR`;
-  - `upsertLead` faz `select` com filtro `whatsapp ilike '%<last10>'` (ou usa RPC) antes de inserir;
-  - captura erro `23505` como no-op.
-- Nova migração:
-  - dedup dos leads existentes por `right(digits,10)` (mantém o mais antigo);
-  - cria `UNIQUE INDEX` funcional descrito acima.
+- **Migração** — adiciona `funnel_step`, `funnel_answers`, `funnel_last_question_at`, `funnel_retries` em `public.leads`.
+- **`supabase/functions/ziontalk-webhook/index.ts`** — extrai texto da mensagem, lê/atualiza estado do funil, chama IA para validar, envia próxima pergunta ou mensagem final. Mantém a lógica de deduplicação atual.
 
-Sem mudança no painel `/admin` nem em outros fluxos.
+## Limites conhecidos
+
+- Sem timeout de sessão: se o lead sumir por dias e voltar, retoma de onde parou. (Pode ser adicionado depois com base em `funnel_last_question_at`.)
+- Retry de reformulação vai até 2 tentativas por pergunta; depois aceita qualquer resposta para não travar.
+- Custo de IA: 1 chamada de validação por mensagem recebida durante o funil (7 chamadas por lead completo).
