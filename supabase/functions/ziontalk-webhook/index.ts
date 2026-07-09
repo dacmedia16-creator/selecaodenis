@@ -321,7 +321,7 @@ async function runFunnel(
   const validation = await validateAnswerWithAI(currentQ.question, trimmedMsg);
 
   if (!validation.faz_sentido && retries < 2) {
-    await updateLeadFunnel(lead.id, { funnel_retries: retries + 1 });
+    await updateLeadFunnel(lead.id, { funnel_retries: retries + 1, funnel_followup_stage: 0 });
     await sendWhatsapp(mobilePhone, cd, validation.pergunta_reformulada);
     return;
   }
@@ -333,6 +333,7 @@ async function runFunnel(
     funnel_answers: newAnswers,
     funnel_step: nextStep,
     funnel_retries: 0,
+    funnel_followup_stage: 0,
     funnel_last_question_at: new Date().toISOString(),
   };
 
