@@ -8,8 +8,12 @@ function pickPhone(payload: any): string | null {
   if (!payload || typeof payload !== 'object') return null;
 
   const candidates = [
+    payload.contato?.telefone,
+    payload.contato?.phone,
+    payload.contato?.mobile_phone,
     payload.mobile_phone,
     payload.phone,
+    payload.telefone,
     payload.from,
     payload.sender,
     payload.contact?.phone,
@@ -20,6 +24,7 @@ function pickPhone(payload: any): string | null {
     payload.data?.from,
     payload.data?.mobile_phone,
     payload.data?.phone,
+    payload.data?.contato?.telefone,
   ];
 
   for (const c of candidates) {
