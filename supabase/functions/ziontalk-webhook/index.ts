@@ -8,8 +8,12 @@ function pickPhone(payload: any): string | null {
   if (!payload || typeof payload !== 'object') return null;
 
   const candidates = [
+    payload.contato?.telefone,
+    payload.contato?.phone,
+    payload.contato?.mobile_phone,
     payload.mobile_phone,
     payload.phone,
+    payload.telefone,
     payload.from,
     payload.sender,
     payload.contact?.phone,
@@ -20,6 +24,7 @@ function pickPhone(payload: any): string | null {
     payload.data?.from,
     payload.data?.mobile_phone,
     payload.data?.phone,
+    payload.data?.contato?.telefone,
   ];
 
   for (const c of candidates) {
@@ -80,6 +85,16 @@ Deno.serve(async (req) => {
     }
 
     console.log('[ziontalk-webhook] payload:', JSON.stringify(payload));
+
+    // Only respond to inbound "mensagem.recebida" events
+    const evento = (payload?.evento ?? payload?.event ?? '').toString().toLowerCase();
+    if (evento && evento !== 'mensagem.recebida' && evento !== 'message.received') {
+      console.log(`[ziontalk-webhook] ignored: evento=${evento}`);
+      return new Response(JSON.stringify({ ok: true, ignored: 'wrong_event', evento }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     if (!isInbound(payload)) {
       console.log('[ziontalk-webhook] ignored: not inbound');
