@@ -658,4 +658,115 @@ const DeleteLeadDialog = ({
   </AlertDialog>
 );
 
+const FunnelDetails = ({ lead, className }: { lead: Lead; className?: string }) => {
+  const status = funnelStatus(lead.funnel_step);
+  const answers = lead.funnel_answers ?? {};
+  const hasAny = FUNNEL_QUESTIONS.some((q) => answers[q.key]);
+  return (
+    <div className={`rounded-lg border border-border bg-muted/30 p-3 ${className ?? ""}`}>
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+          Funil de qualificação
+        </p>
+        <Badge variant={status.variant} className="text-[10px]">
+          {status.label}
+        </Badge>
+      </div>
+      {hasAny ? (
+        <ol className="space-y-2 text-sm">
+          {FUNNEL_QUESTIONS.map((q, i) => (
+            <li key={q.key} className="grid gap-0.5">
+              <span className="text-[11px] font-medium text-muted-foreground">
+                {i + 1}. {q.label}
+              </span>
+              <span className="text-foreground">{answers[q.key] || "—"}</span>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="text-sm text-muted-foreground">Nenhuma resposta ainda.</p>
+      )}
+    </div>
+  );
+};
+
+const LeadRow = ({
+  lead,
+  onDelete,
+}: {
+  lead: Lead;
+  onDelete: (id: string, name: string) => void;
+}) => {
+  const [open, setOpen] = useState(false);
+  const status = funnelStatus(lead.funnel_step);
+  return (
+    <>
+      <TableRow>
+        <TableCell className="w-8">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Recolher respostas" : "Ver respostas"}
+          >
+            <ChevronDown
+              className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}
+            />
+          </Button>
+        </TableCell>
+        <TableCell className="font-medium">{lead.name}</TableCell>
+        <TableCell>
+          <a
+            href={`https://wa.me/${lead.whatsapp.replace(/\D/g, "")}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            {lead.whatsapp}
+          </a>
+        </TableCell>
+        <TableCell>
+          <a href={`mailto:${lead.email}`} className="text-primary hover:underline">
+            {lead.email}
+          </a>
+        </TableCell>
+        <TableCell>{lead.city}</TableCell>
+        <TableCell>
+          {lead.is_agent ? (
+            <Badge variant="default">Sim</Badge>
+          ) : (
+            <Badge variant="secondary">Não</Badge>
+          )}
+        </TableCell>
+        <TableCell>
+          <Badge variant={status.variant} className="whitespace-nowrap">
+            {status.label}
+          </Badge>
+        </TableCell>
+        <TableCell
+          className="max-w-xs truncate text-muted-foreground"
+          title={lead.attraction ?? ""}
+        >
+          {lead.attraction || "—"}
+        </TableCell>
+        <TableCell className="whitespace-nowrap text-right text-sm text-muted-foreground">
+          {format(new Date(lead.created_at), "dd/MM/yy HH:mm", { locale: ptBR })}
+        </TableCell>
+        <TableCell className="text-right">
+          <DeleteLeadDialog lead={lead} onDelete={onDelete} />
+        </TableCell>
+      </TableRow>
+      {open && (
+        <TableRow>
+          <TableCell colSpan={10} className="bg-muted/20">
+            <FunnelDetails lead={lead} />
+          </TableCell>
+        </TableRow>
+      )}
+    </>
+  );
+};
+
 export default Admin;
+
