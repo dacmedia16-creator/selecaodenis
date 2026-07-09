@@ -2,7 +2,22 @@ import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 
 const ZIONTALK_API_KEY = Deno.env.get('ZIONTALK_API_KEY') ?? '';
 const REPLY_MESSAGE =
-  'Logo a RecrutaMax vai entrar em contato, aproveita e veja www.recrutamax.com.br';
+  'Logo a REMAX vai entrar em contato aproveita e veja www.recrutamax.com.br';
+
+function normalizePhone(rawPhone: string): { mobilePhone: string; cd?: string } {
+  const trimmed = rawPhone.trim();
+  const digits = trimmed.replace(/\D/g, '');
+
+  if (digits.startsWith('55') && digits.length >= 12) {
+    return { mobilePhone: digits.slice(2), cd: '+55' };
+  }
+
+  if (trimmed.startsWith('+')) {
+    return { mobilePhone: trimmed };
+  }
+
+  return { mobilePhone: digits || trimmed };
+}
 
 function pickPhone(payload: any): string | null {
   if (!payload || typeof payload !== 'object') return null;
@@ -121,9 +136,11 @@ Deno.serve(async (req) => {
       });
     }
 
+    const { mobilePhone, cd } = normalizePhone(phone);
     const form = new FormData();
     form.append('msg', REPLY_MESSAGE);
-    form.append('mobile_phone', phone);
+    form.append('mobile_phone', mobilePhone);
+    if (cd) form.append('cd', cd);
 
     const auth = 'Basic ' + btoa(`${ZIONTALK_API_KEY}:`);
 
@@ -135,7 +152,7 @@ Deno.serve(async (req) => {
 
     const bodyText = await resp.text();
     console.log(
-      `[ziontalk-webhook] send_message -> ${resp.status} to ${phone} | body: ${bodyText.slice(0, 500)}`,
+      `[ziontalk-webhook] send_message -> ${resp.status} to ${phone} as ${mobilePhone}${cd ? ` cd=${cd}` : ''} | body: ${bodyText.slice(0, 500)}`,
     );
 
     return new Response(
