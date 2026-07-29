@@ -379,6 +379,13 @@ async function runFunnel(
 
   if (nextStep > QUESTIONS.length) {
     await sendWhatsapp(mobilePhone, cd, FINAL_MESSAGE);
+    // Envia o vídeo de boas-vindas
+    try {
+      await new Promise((r) => setTimeout(r, 800));
+      await sendWhatsappVideo(mobilePhone, cd, FINAL_VIDEO_CAPTION);
+    } catch (e) {
+      console.error('[ziontalk-webhook] falha ao enviar vídeo final:', String(e));
+    }
     // Notifica gestor com resumo do lead + respostas
     await notifyManager(lead, newAnswers, mobilePhone, cd);
   } else {
