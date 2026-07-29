@@ -353,7 +353,7 @@ async function runFunnel(
   }
 }
 
-const MANAGER_PHONE = '15981788214';
+const MANAGER_PHONES = ['15981788214', '15981888214'];
 const MANAGER_CD = '+55';
 
 async function notifyManager(
@@ -373,7 +373,15 @@ async function notifyManager(
     'Respostas:',
     ...QUESTIONS.map((q, i) => `${i + 1}. ${q.question} ${answers[q.key] ?? '—'}`),
   ];
-  await sendWhatsapp(MANAGER_PHONE, MANAGER_CD, lines.join('\n'));
+  const msg = lines.join('\n');
+  for (const phone of MANAGER_PHONES) {
+    try {
+      await sendWhatsapp(phone, MANAGER_CD, msg);
+    } catch (e) {
+      console.error(`[ziontalk-webhook] falha ao notificar gestor ${phone}:`, String(e));
+    }
+    await new Promise((r) => setTimeout(r, 500));
+  }
 }
 
 
