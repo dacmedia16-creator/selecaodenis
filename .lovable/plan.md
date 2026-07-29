@@ -1,33 +1,18 @@
 ## Objetivo
 
-Quando o lead terminar de responder as 7 perguntas do funil, além da mensagem final com o site, enviar o vídeo enviado (WhatsApp_Video_2026-07-29, 90s, ~14 MB) para o WhatsApp dele.
+Fazer um envio de teste do vídeo final para o WhatsApp **+55 15 98178-8214**, para você conferir como chega.
 
-## Como funciona
+## Como será feito
 
-A API da ZionTalk (`POST /api/send_message/`) aceita anexos via `multipart/form-data` no campo `attachments`. Então dá para enviar o vídeo direto pela mesma função que já responde o lead.
+Um único disparo direto na API da ZionTalk, usando a mesma rota que a função usa no fim do funil:
 
-## Passos
+- `POST https://app.ziontalk.com/api/send_message/`
+- `mobile_phone=15981788214`, `cd=+55`
+- `msg=Dá uma olhada nesse vídeo rapidinho 👇`
+- `attachments` = o vídeo hospedado no CDN (`video-boas-vindas.mp4`, ~14 MB)
 
-1. **Hospedar o vídeo no CDN da Lovable**
-   - Subir `WhatsApp_Video_2026-07-29_at_20.21.46_1.mp4` com o CLI de assets, gerando `src/assets/video-boas-vindas.mp4.asset.json`.
-   - A URL pública do CDN será usada pela função de backend para baixar o arquivo na hora do envio (o binário não fica no repositório).
+Depois eu te informo o status da resposta da ZionTalk (200 = entregue à fila) e, se der erro de tamanho, comprimo o vídeo para ~8 MB e reenvio.
 
-2. **Alterar `supabase/functions/ziontalk-webhook/index.ts`**
-   - Nova função `sendWhatsappWithVideo(mobilePhone, cd, msg)`: faz `fetch` da URL do vídeo, monta um `FormData` com `msg`, `mobile_phone`, `cd` e `attachments` (blob do vídeo) e envia para a ZionTalk.
-   - No fim do funil (`nextStep > QUESTIONS.length`): manter a mensagem final de texto e, logo depois (com pequeno intervalo), enviar o vídeo com uma legenda curta.
-   - Envio do vídeo protegido por try/catch e log: se falhar, o funil continua normal e o gestor ainda recebe o resumo.
-   - Redeploy da função.
+## Observação
 
-## Detalhes técnicos
-
-- Vídeo: MP4, 90s, ~14 MB — dentro do limite típico do WhatsApp (16 MB), mas se a ZionTalk recusar por tamanho, comprimo o arquivo (target ~8 MB) e reenvio.
-- A URL do CDN é fixa e imutável, então não precisa de storage nem de secret novo.
-
-## Pergunta rápida
-
-Quer alguma legenda junto do vídeo? Se não me disser, uso algo como: *"Dá uma olhada nesse vídeo rapidinho 👇"*.
-
-## Arquivos alterados
-
-- `src/assets/video-boas-vindas.mp4.asset.json` (novo)
-- `supabase/functions/ziontalk-webhook/index.ts`
+Isso é só um teste manual — nada muda no código nem no funil, que já está publicado e funcionando.
