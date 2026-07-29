@@ -156,6 +156,39 @@ async function sendWhatsapp(mobilePhone: string, cd: string | undefined, msg: st
   return { ok: resp.ok, status: resp.status };
 }
 
+const FINAL_VIDEO_URL =
+  'https://recrutamax.com.br/__l5e/assets-v1/7650928e-cea2-40a8-ba1b-b544cb0803ce/video-boas-vindas.mp4';
+const FINAL_VIDEO_CAPTION = 'Dá uma olhada nesse vídeo rapidinho 👇';
+
+async function sendWhatsappVideo(mobilePhone: string, cd: string | undefined, msg: string) {
+  if (!ZIONTALK_API_KEY) {
+    console.error('[ziontalk-webhook] ZIONTALK_API_KEY not configured');
+    return { ok: false, status: 500 };
+  }
+  const videoResp = await fetch(FINAL_VIDEO_URL);
+  if (!videoResp.ok) {
+    console.error(`[ziontalk-webhook] falha ao baixar vídeo: ${videoResp.status}`);
+    return { ok: false, status: videoResp.status };
+  }
+  const blob = await videoResp.blob();
+  const form = new FormData();
+  form.append('msg', msg);
+  form.append('mobile_phone', mobilePhone);
+  if (cd) form.append('cd', cd);
+  form.append('attachments', new File([blob], 'video-boas-vindas.mp4', { type: 'video/mp4' }));
+  const auth = 'Basic ' + btoa(`${ZIONTALK_API_KEY}:`);
+  const resp = await fetch('https://app.ziontalk.com/api/send_message/', {
+    method: 'POST',
+    headers: { Authorization: auth },
+    body: form,
+  });
+  const bodyText = await resp.text();
+  console.log(
+    `[ziontalk-webhook] send video -> ${resp.status} to ${mobilePhone} | ${blob.size} bytes | body: ${bodyText.slice(0, 200)}`,
+  );
+  return { ok: resp.ok, status: resp.status };
+}
+
 // ==================== IA VALIDATION ====================
 
 async function validateAnswerWithAI(
@@ -346,6 +379,13 @@ async function runFunnel(
 
   if (nextStep > QUESTIONS.length) {
     await sendWhatsapp(mobilePhone, cd, FINAL_MESSAGE);
+    // Envia o vídeo de boas-vindas
+    try {
+      await new Promise((r) => setTimeout(r, 800));
+      await sendWhatsappVideo(mobilePhone, cd, FINAL_VIDEO_CAPTION);
+    } catch (e) {
+      console.error('[ziontalk-webhook] falha ao enviar vídeo final:', String(e));
+    }
     // Notifica gestor com resumo do lead + respostas
     await notifyManager(lead, newAnswers, mobilePhone, cd);
   } else {
