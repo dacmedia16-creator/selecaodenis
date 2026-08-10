@@ -323,10 +323,16 @@ async function runFunnel(
   const answers: Record<string, any> = lead.funnel_answers ?? {};
   const retries: number = lead.funnel_retries ?? 0;
 
-  // Step 0: envia abertura + primeira pergunta
+  // Step 0: envia abertura + vídeo + primeira pergunta
   if (step === 0) {
     await sendWhatsapp(mobilePhone, cd, OPENING);
     await new Promise((r) => setTimeout(r, 600));
+    try {
+      await sendWhatsappVideo(mobilePhone, cd, FINAL_VIDEO_CAPTION);
+    } catch (e) {
+      console.error('[ziontalk-webhook] falha ao enviar vídeo de abertura:', String(e));
+    }
+    await new Promise((r) => setTimeout(r, 800));
     await sendWhatsapp(mobilePhone, cd, QUESTIONS[0].question);
     await updateLeadFunnel(lead.id, {
       funnel_step: 1,
@@ -385,13 +391,6 @@ async function runFunnel(
 
   if (nextStep > QUESTIONS.length) {
     await sendWhatsapp(mobilePhone, cd, FINAL_MESSAGE);
-    // Envia o vídeo de boas-vindas
-    try {
-      await new Promise((r) => setTimeout(r, 800));
-      await sendWhatsappVideo(mobilePhone, cd, FINAL_VIDEO_CAPTION);
-    } catch (e) {
-      console.error('[ziontalk-webhook] falha ao enviar vídeo final:', String(e));
-    }
     // Notifica gestor com resumo do lead + respostas
     await notifyManager(lead, newAnswers, mobilePhone, cd);
   } else {
