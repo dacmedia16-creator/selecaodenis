@@ -176,7 +176,7 @@ async function sendWhatsappVideo(mobilePhone: string, cd: string | undefined, ms
   form.append('msg', msg);
   form.append('mobile_phone', mobilePhone);
   if (cd) form.append('cd', cd);
-  form.append('attachments', new File([blob], 'video-boas-vindas.mp4', { type: 'video/mp4' }));
+  form.append('attachments', new File([blob], 'rmx-institucional.mp4', { type: 'video/mp4' }));
   const auth = 'Basic ' + btoa(`${ZIONTALK_API_KEY}:`);
   const resp = await fetch('https://app.ziontalk.com/api/send_message/', {
     method: 'POST',
