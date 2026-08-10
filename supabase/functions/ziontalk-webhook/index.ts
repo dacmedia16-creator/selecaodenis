@@ -158,7 +158,7 @@ async function sendWhatsapp(mobilePhone: string, cd: string | undefined, msg: st
 }
 
 const FINAL_VIDEO_URL =
-  'https://recrutamax.com.br/__l5e/assets-v1/671e260f-3224-4228-b47f-4d20bf8f33f1/rmx-institucional.mp4';
+  'https://recrutamax.com.br/__l5e/assets-v1/078dd3d4-2568-42c8-a9cf-672e959ee96b/rmx-institucional-1.mp4';
 const FINAL_VIDEO_CAPTION = 'Dá uma olhada nesse vídeo rapidinho 👇';
 
 async function sendWhatsappVideo(mobilePhone: string, cd: string | undefined, msg: string) {
