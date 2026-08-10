@@ -19,6 +19,7 @@ type FunnelQuestion = { key: string; question: string };
 
 const QUESTIONS: FunnelQuestion[] = [
   { key: 'nome', question: 'Qual seu nome?' },
+  { key: 'cidade', question: 'Qual cidade você mora?' },
   { key: 'trabalha_atualmente', question: 'Você trabalha atualmente?' },
   { key: 'renda_ou_profissao', question: 'Está buscando renda extra ou uma nova profissão?' },
   { key: 'experiencia_vendas', question: 'Já trabalhou com vendas ou atendimento?' },
@@ -373,6 +374,11 @@ async function runFunnel(
   // Se resposta 1 (nome), atualiza também o name principal do lead
   if (currentQ.key === 'nome' && validation.resposta_normalizada) {
     patch.name = validation.resposta_normalizada.slice(0, 120);
+  }
+
+  // Se resposta de cidade, atualiza o city principal do lead
+  if (currentQ.key === 'cidade' && validation.resposta_normalizada) {
+    patch.city = validation.resposta_normalizada.slice(0, 120);
   }
 
   await updateLeadFunnel(lead.id, patch);
