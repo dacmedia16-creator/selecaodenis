@@ -158,7 +158,7 @@ async function sendWhatsapp(mobilePhone: string, cd: string | undefined, msg: st
 }
 
 const FINAL_VIDEO_URL =
-  'https://recrutamax.com.br/__l5e/assets-v1/7650928e-cea2-40a8-ba1b-b544cb0803ce/video-boas-vindas.mp4';
+  'https://recrutamax.com.br/__l5e/assets-v1/671e260f-3224-4228-b47f-4d20bf8f33f1/rmx-institucional.mp4';
 const FINAL_VIDEO_CAPTION = 'Dá uma olhada nesse vídeo rapidinho 👇';
 
 async function sendWhatsappVideo(mobilePhone: string, cd: string | undefined, msg: string) {
@@ -176,7 +176,7 @@ async function sendWhatsappVideo(mobilePhone: string, cd: string | undefined, ms
   form.append('msg', msg);
   form.append('mobile_phone', mobilePhone);
   if (cd) form.append('cd', cd);
-  form.append('attachments', new File([blob], 'video-boas-vindas.mp4', { type: 'video/mp4' }));
+  form.append('attachments', new File([blob], 'rmx-institucional.mp4', { type: 'video/mp4' }));
   const auth = 'Basic ' + btoa(`${ZIONTALK_API_KEY}:`);
   const resp = await fetch('https://app.ziontalk.com/api/send_message/', {
     method: 'POST',
