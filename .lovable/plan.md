@@ -1,18 +1,39 @@
+# Adicionar pergunta "Qual cidade você mora?" ao funil do WhatsApp
+
 ## Objetivo
+Incluir uma nova pergunta de cidade no funil de qualificação que o lead recebe via WhatsApp, e salvar a resposta no campo `city` do lead (hoje fica como "Não informado").
 
-Fazer um envio de teste do vídeo final para o WhatsApp **+55 15 98178-8214**, para você conferir como chega.
+## Decisão de posicionamento
+A pergunta de cidade entrará como **pergunta #2**, logo após o nome. Motivo: cidade é informação demográfica básica (como o nome), faz sentido coletar cedo antes das perguntas de qualificação profissional. Ordem atual:
 
-## Como será feito
+1. Qual seu nome?
+2. **Qual cidade você mora?** ← NOVA
+3. Você trabalha atualmente?
+4. Está buscando renda extra ou uma nova profissão?
+5. Já trabalhou com vendas ou atendimento?
+6. Você tem disponibilidade para treinamento?
+7. Você entende que corretor trabalha por comissão, sem salário fixo no início?
+8. Se fizer sentido, você teria interesse em participar de uma conversa para conhecer o plano de carreira da RE/MAX?
 
-Um único disparo direto na API da ZionTalk, usando a mesma rota que a função usa no fim do funil:
+## Mudanças (somente no edge function `ziontalk-webhook`)
+Arquivo: `supabase/functions/ziontalk-webhook/index.ts`
 
-- `POST https://app.ziontalk.com/api/send_message/`
-- `mobile_phone=15981788214`, `cd=+55`
-- `msg=Dá uma olhada nesse vídeo rapidinho 👇`
-- `attachments` = o vídeo hospedado no CDN (`video-boas-vindas.mp4`, ~14 MB)
+1. Inserir no array `QUESTIONS`, na posição 2:
+   `{ key: 'cidade', question: 'Qual cidade você mora?' }`
+2. Após aceitar a resposta, atualizar o campo `city` do lead (igual já é feito para `name` quando `key === 'nome'`):
+   ```ts
+   if (currentQ.key === 'cidade' && validation.resposta_normalizada) {
+     patch.city = validation.resposta_normalizada.slice(0, 120);
+   }
+   ```
 
-Depois eu te informo o status da resposta da ZionTalk (200 = entregue à fila) e, se der erro de tamanho, comprimo o vídeo para ~8 MB e reenvio.
+Nenhuma migração de banco é necessária — a coluna `city` já existe na tabela `leads`.
 
-## Observação
+## Observações
+- Leads existentes que já responderam o funil não serão reafetados (o `funnel_step` deles já passou).
+- A notificação ao gestor já lista todas as perguntas via `QUESTIONS.map(...)`, então a nova pergunta aparece automaticamente no resumo enviado aos números +55 15 98178-8214 e +55 15 98188-8214.
+- Após editar, reimplantar o edge function.
 
-Isso é só um teste manual — nada muda no código nem no funil, que já está publicado e funcionando.
+## Validação
+- Checar que o edge function publica sem erro.
+- Opcional: disparar um teste manual para confirmar a ordem das perguntas.
