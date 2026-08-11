@@ -398,7 +398,7 @@ async function runFunnel(
   }
 }
 
-const MANAGER_PHONES = ['15981788214', '15981888214'];
+const MANAGER_PHONES = ['15981788214', '15996370990'];
 const MANAGER_CD = '+55';
 
 async function notifyManager(
