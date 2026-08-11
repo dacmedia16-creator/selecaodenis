@@ -1,20 +1,30 @@
-# Adicionar número de gestor no webhook
+# Enviar dados parciais da Cristhiane aos gestores
 
-## Mudança
-No arquivo `supabase/functions/ziontalk-webhook/index.ts`, linha 401, adicionar o número `5515991984949` (15 99198-4949) à lista de gestores que recebem os resumos de leads.
+## Contexto
+A lead **Cristhiane** (+55 15 99198-4949, Salto de Pirapora) entrou no funil hoje e parou na 4ª pergunta. Respostas já dadas:
 
-Antes:
-```ts
-const MANAGER_PHONES = ['15981788214', '15996370990'];
+- Nome: Cristhiane
+- Cidade: Salto de Pirapora
+- Trabalha atualmente: Sim
+
+## O que vou fazer
+Envio único, manual, agora — sem alterar o código do funil.
+
+Mando pelo WhatsApp (ZionTalk) para os dois gestores (**15 98178-8214** e **15 99637-0990**) um resumo no mesmo formato do resumo padrão, mas marcado como parcial:
+
+```text
+⚠️ Lead em andamento (não finalizou) — RE/MAX
+
+Nome: Cristhiane
+WhatsApp: +55 15 99198-4949
+
+Respostas até agora:
+1. Qual seu nome? Cristhiane
+2. Qual cidade você mora? Salto de Pirapora
+3. Você trabalha atualmente? Sim
+
+Parou na pergunta 4: Está buscando renda extra ou uma nova profissão?
 ```
 
-Depois:
-```ts
-const MANAGER_PHONES = ['15981788214', '15996370990', '15991984949'];
-```
-
-O número informado (`5515991984949`) inclui o código do Brasil (55); no array entra sem o 55, pois o `MANAGER_CD = '+55'` já adiciona o prefixo no envio.
-
-## Pós-edição
-- Fazer deploy da edge function `ziontalk-webhook` para aplicar a mudança.
-- (Opcional) Enviar um teste para confirmar que os resumos de leads chegam no novo número.
+## Observação
+A regra automática de avisar os gestores após 30 min sem resposta não entra agora (você escolheu apenas o envio manual). Posso implementá-la depois, é só pedir.
