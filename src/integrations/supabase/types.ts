@@ -92,6 +92,24 @@ export type Database = {
         }
         Relationships: []
       }
+      manager_notify_queue: {
+        Row: {
+          lead_id: string
+          position: number
+          sent_at: string | null
+        }
+        Insert: {
+          lead_id: string
+          position: number
+          sent_at?: string | null
+        }
+        Update: {
+          lead_id?: string
+          position?: number
+          sent_at?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
