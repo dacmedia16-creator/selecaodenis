@@ -1,0 +1,1 @@
+- Partial-lead backlog to managers goes through manager_notify_queue + manager-notify-queue function (cron, 1 per hour, 7/day) — throttled to avoid WhatsApp bans.
